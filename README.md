@@ -42,9 +42,6 @@ For every detection, PhishLens answers:
 
 ## 🎯 2. Hackathon Track Alignment
 
-> *"Build a defense mechanism, educational simulator, or monitoring tool that helps organizations or individuals understand, prevent, or mitigate digital threats."*
-> *"The solution must include a frontend interface that successfully explains the threat or defense action to a non-technical end user."*
-
 PhishLens places AI in the **critical path**:
 - Without the hybrid AI classifier, linguistic feature extractor, and static URL analyzer, threat explainability fails.
 - Visual highlighting and plain-English summaries make cybersecurity intuitive for anyone without technical training.
