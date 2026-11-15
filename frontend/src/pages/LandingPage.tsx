@@ -1,183 +1,175 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Shield, 
   Search, 
-  Sparkles, 
   MessageSquare, 
   Globe, 
   FileText, 
   Image as ImageIcon, 
   ArrowRight, 
-  CheckCircle2, 
   AlertOctagon, 
-  Lock, 
-  Eye, 
-  Cpu, 
-  Zap 
+  FlaskConical,
+  ShieldCheck
 } from 'lucide-react';
 import { ThreatBadge } from '../components/ThreatBadge';
 
 export const LandingPage: React.FC = () => {
   return (
-    <div className="space-y-24 py-8">
+    <div className="space-y-16 py-4 font-sans animate-page-enter">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-16">
-        {/* Background ambient glowing gradient spheres */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-cyan-500/15 via-blue-600/10 to-transparent blur-[120px] pointer-events-none rounded-full"></div>
+      <section className="pt-6 pb-8 text-center max-w-4xl mx-auto px-4">
+        {/* Research Badge */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E6F4F1] border border-[#087F75]/20 text-[#087F75] text-xs font-medium mb-4 shadow-xs">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#087F75]" />
+          <span>Explainable Cybersecurity System</span>
+        </div>
 
-        <div className="max-w-5xl mx-auto text-center px-4 relative z-10">
-          {/* Top Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-6 shadow-sm shadow-cyan-500/10">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>EXPLAINABLE CYBERSECURITY DEFENSE SYSTEM</span>
+        {/* Main Title */}
+        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#172321]">
+          PHISH<span className="text-[#087F75]">LENS</span> AI
+        </h1>
+
+        <p className="mt-3 text-base sm:text-lg font-medium text-[#172321]">
+          Explainable, multi-modal threat assessment and user defense protocol.
+        </p>
+
+        <p className="mt-2.5 text-xs sm:text-sm text-[#697773] max-w-2xl mx-auto leading-relaxed">
+          PhishLens decomposes digital threats across text messages, links, email headers, and screenshots.
+          Rather than returning an opaque binary verdict, it isolates exact indicators and explains why an artifact is dangerous.
+        </p>
+
+        {/* Hero CTAs */}
+        <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            to="/analyze"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-lg text-xs font-semibold bg-[#087F75] hover:bg-[#076c64] active:scale-[0.98] text-white shadow-xs transition-all duration-150 flex items-center justify-center gap-2"
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Launch Analysis Console</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+
+          <Link
+            to="/demo"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-lg text-xs font-medium bg-[#FFFFFF] hover:bg-[#F7F8F6] active:scale-[0.98] text-[#172321] border border-[#E2E8E5] shadow-xs transition-all duration-150 flex items-center justify-center gap-2"
+          >
+            <FlaskConical className="w-3.5 h-3.5 text-[#087F75]" />
+            <span>Interactive Demo Scenarios</span>
+          </Link>
+        </div>
+
+        {/* Technical Specification Grid */}
+        <div className="mt-10 pt-6 border-t border-[#E2E8E5] grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+          <div className="p-3 rounded-lg bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs hover:border-[#087F75]/30 hover:-translate-y-0.5 transition-all duration-200">
+            <div className="text-xs font-bold text-[#172321]">4 Input Modalities</div>
+            <div className="text-[11px] text-[#697773] mt-0.5">Text, URL, Email, Screenshot OCR</div>
           </div>
-
-          {/* Main Title & Tagline */}
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white font-sans">
-            PHISH<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">LENS</span> AI
-          </h1>
-          <p className="mt-4 text-xl sm:text-2xl font-mono text-cyan-300 tracking-wide">
-            "Understand the threat before you click."
-          </p>
-
-          <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            AI-powered phishing detection that doesn't just warn you — it visually <strong className="text-white">explains why</strong> a message, URL, email, or screenshot may be dangerous and guides your next safe action.
-          </p>
-
-          {/* Hero CTAs */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/analyze"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/35 transition-all flex items-center justify-center gap-2 group"
-            >
-              <Search className="w-4 h-4 text-slate-950 group-hover:scale-110 transition-transform" />
-              <span>Analyze Something</span>
-              <ArrowRight className="w-4 h-4 text-slate-950" />
-            </Link>
-
-            <Link
-              to="/demo"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-semibold text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-cyan-500/50 shadow-lg transition-all flex items-center justify-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Try Live Demo Scenarios</span>
-            </Link>
+          <div className="p-3 rounded-lg bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs hover:border-[#087F75]/30 hover:-translate-y-0.5 transition-all duration-200">
+            <div className="text-xs font-bold text-[#172321]">Static URL Protocol</div>
+            <div className="text-[11px] text-[#697773] mt-0.5">Zero live connection or detonation</div>
           </div>
-
-          {/* Quick trust metrics */}
-          <div className="mt-12 pt-8 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-6 text-left">
-            <div>
-              <div className="text-2xl font-extrabold font-mono text-white">100%</div>
-              <div className="text-xs text-slate-400 mt-0.5">Static URL Isolation</div>
-            </div>
-            <div>
-              <div className="text-2xl font-extrabold font-mono text-cyan-400">4-Way</div>
-              <div className="text-xs text-slate-400 mt-0.5">Text, URL, Email, OCR</div>
-            </div>
-            <div>
-              <div className="text-2xl font-extrabold font-mono text-white">0-100</div>
-              <div className="text-xs text-slate-400 mt-0.5">Transparent Risk Score</div>
-            </div>
-            <div>
-              <div className="text-2xl font-extrabold font-mono text-emerald-400">&lt; 3s</div>
-              <div className="text-xs text-slate-400 mt-0.5">Real-time Hybrid AI</div>
-            </div>
+          <div className="p-3 rounded-lg bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs hover:border-[#087F75]/30 hover:-translate-y-0.5 transition-all duration-200">
+            <div className="text-xs font-bold text-[#172321]">Deterministic Engine</div>
+            <div className="text-[11px] text-[#697773] mt-0.5">Heuristics + TF-IDF classification</div>
+          </div>
+          <div className="p-3 rounded-lg bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs hover:border-[#087F75]/30 hover:-translate-y-0.5 transition-all duration-200">
+            <div className="text-xs font-bold text-[#172321]">Explainable Output</div>
+            <div className="text-[11px] text-[#697773] mt-0.5">Span highlighting &amp; action guides</div>
           </div>
         </div>
       </section>
 
       {/* Interactive Sample Threat Report Card Section */}
       <section className="max-w-5xl mx-auto px-4">
-        <div className="text-center mb-8">
-          <h2 className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">
-            Sample Threat Detection
+        <div className="mb-4">
+          <h2 className="text-xs font-semibold text-[#087F75] uppercase tracking-wider font-mono">
+            Forensic Inspection Preview
           </h2>
-          <p className="text-2xl font-bold text-white mt-1">
-            See Explainable AI in Action
+          <p className="text-base sm:text-lg font-bold text-[#172321] mt-0.5">
+            Transparent Threat Breakdown
           </p>
         </div>
 
-        <div className="rounded-2xl bg-[#0B1120] border border-slate-800 shadow-2xl overflow-hidden">
-          <div className="p-6 bg-gradient-to-r from-red-500/10 via-slate-900 to-slate-950 border-b border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/40 flex items-center justify-center shrink-0">
-                <AlertOctagon className="w-8 h-8 text-red-400 animate-pulse" />
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs overflow-hidden">
+          <div className="p-5 bg-[#F7F8F6] border-b border-[#E2E8E5] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#C74747]/8 border border-[#C74747]/20 flex items-center justify-center shrink-0">
+                <AlertOctagon className="w-5 h-5 text-[#C74747]" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl font-extrabold font-mono text-white">91</span>
-                  <span className="text-slate-400 font-mono text-xs">/100</span>
-                  <ThreatBadge classification="PHISHING" size="md" />
+                  <span className="text-xl font-extrabold font-mono text-[#172321]">91</span>
+                  <span className="text-[#697773] font-mono text-xs">/100</span>
+                  <ThreatBadge classification="PHISHING" size="sm" />
                 </div>
-                <h3 className="text-base font-semibold text-slate-200 mt-0.5">
+                <h3 className="text-sm font-semibold text-[#172321] mt-0.5">
                   Critical Risk: Credential Harvesting Scam
                 </h3>
               </div>
             </div>
 
-            <div className="text-right">
-              <span className="text-xs font-mono text-slate-400 block">Confidence Metric</span>
-              <span className="text-sm font-mono font-bold text-cyan-400">94% Converged</span>
+            <div className="text-left md:text-right">
+              <span className="text-[11px] font-sans text-[#697773] block">Assessment Metric</span>
+              <span className="text-xs font-mono font-semibold text-[#172321]">High Convergence (94%)</span>
             </div>
           </div>
 
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left: Highlighted text & reasoning */}
-            <div className="space-y-4">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
-                FLAGGED INCOMING SMS MESSAGE
+            <div className="space-y-3">
+              <span className="text-[11px] font-mono text-[#697773] uppercase tracking-wider block">
+                Flagged Sample SMS Content
               </span>
-              <div className="p-4 rounded-xl bg-slate-950 font-mono text-sm leading-relaxed border border-slate-800 text-slate-300">
+              <div className="p-3.5 rounded-lg bg-[#F7F8F6] font-mono text-xs leading-relaxed border border-[#E2E8E5] text-[#172321]">
                 "URGENT! Your Chase bank account will be{' '}
-                <span className="bg-red-500/20 text-red-300 border border-red-500/40 px-1 py-0.5 rounded font-bold">
+                <span className="bg-[#C74747]/10 text-[#C74747] border border-[#C74747]/30 px-1 py-0.5 rounded font-semibold">
                   BLOCKED TODAY
                 </span>
                 . Verify your{' '}
-                <span className="bg-red-500/20 text-red-300 border border-red-500/40 px-1 py-0.5 rounded font-bold">
+                <span className="bg-[#C74747]/10 text-[#C74747] border border-[#C74747]/30 px-1 py-0.5 rounded font-semibold">
                   PASSWORD
                 </span>{' '}
                 immediately at{' '}
-                <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1 py-0.5 rounded font-bold">
+                <span className="bg-[#B77932]/10 text-[#B77932] border border-[#B77932]/30 px-1 py-0.5 rounded font-semibold">
                   https://chase-auth-security.xyz
                 </span>
                 "
               </div>
 
-              <div className="p-3.5 rounded-xl bg-cyan-500/5 border border-cyan-500/20 text-xs text-slate-300">
-                <strong className="text-cyan-400 font-mono block mb-1">💡 Natural Language Threat Summary:</strong>
-                PhishLens identified high urgency pressure, a direct request for confidential banking credentials, and an unofficial .xyz domain impersonating Chase.
+              <div className="p-3 rounded-lg bg-[#E6F4F1]/60 border border-[#087F75]/20 text-xs text-[#172321]">
+                <strong className="text-[#087F75] font-sans font-semibold block mb-0.5">Automated Threat Summary:</strong>
+                Identified artificial urgency cues, direct solicitation of confidential authentication credentials, and an unverified `.xyz` target domain impersonating financial infrastructure.
               </div>
             </div>
 
             {/* Right: Detected Indicators */}
-            <div className="space-y-3">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
-                WHY IT WAS FLAGGED (KEY INDICATORS)
+            <div className="space-y-2.5">
+              <span className="text-[11px] font-mono text-[#697773] uppercase tracking-wider block">
+                Key Detected Indicators
               </span>
 
               <div className="space-y-2">
-                <div className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start gap-3">
-                  <span className="text-red-400 font-bold">🚨</span>
+                <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5] flex items-start gap-2.5">
+                  <span className="text-[#C74747] font-bold text-xs shrink-0 mt-0.5">●</span>
                   <div>
-                    <div className="text-xs font-mono font-bold text-slate-200">Urgency Detected</div>
-                    <div className="text-[11px] text-slate-400">Pressures user with immediate account blockage threats.</div>
+                    <div className="text-xs font-semibold text-[#172321]">Urgency Pressure</div>
+                    <div className="text-[11px] text-[#697773]">Forces immediate compliance through arbitrary deadlines.</div>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start gap-3">
-                  <span className="text-red-400 font-bold">🚨</span>
+                <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5] flex items-start gap-2.5">
+                  <span className="text-[#C74747] font-bold text-xs shrink-0 mt-0.5">●</span>
                   <div>
-                    <div className="text-xs font-mono font-bold text-slate-200">Credential Request</div>
-                    <div className="text-[11px] text-slate-400">Solicits private password inputs over unverified links.</div>
+                    <div className="text-xs font-semibold text-[#172321]">Credential Solicitation</div>
+                    <div className="text-[11px] text-[#697773]">Demands authentication credentials over an unverified hyperlink.</div>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 flex items-start gap-3">
-                  <span className="text-orange-400 font-bold">⚠️</span>
+                <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5] flex items-start gap-2.5">
+                  <span className="text-[#B77932] font-bold text-xs shrink-0 mt-0.5">●</span>
                   <div>
-                    <div className="text-xs font-mono font-bold text-slate-200">Brand Impersonation & Suspicious TLD</div>
-                    <div className="text-[11px] text-slate-400">Spoofs Chase brand on an unofficial `.xyz` domain.</div>
+                    <div className="text-xs font-semibold text-[#172321]">Brand Impersonation &amp; Suspicious TLD</div>
+                    <div className="text-[11px] text-[#697773]">Impersonates Chase bank on an untrusted `.xyz` apex domain.</div>
                   </div>
                 </div>
               </div>
@@ -185,9 +177,9 @@ export const LandingPage: React.FC = () => {
               <div className="pt-2">
                 <Link
                   to="/analyze"
-                  className="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-mono font-semibold flex items-center justify-center gap-2 border border-slate-700 transition-colors"
+                  className="w-full py-2 rounded-md bg-[#FFFFFF] hover:bg-[#F7F8F6] text-[#172321] text-xs font-medium flex items-center justify-center gap-1.5 border border-[#E2E8E5] transition-colors"
                 >
-                  <span>Test Your Own Messages</span>
+                  <span>Analyze Custom Input</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -196,104 +188,175 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Four Capability Cards */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">
-            Complete Defensive Suite
+      {/* Visual 4-Stage Detection Pipeline */}
+      <section className="max-w-5xl mx-auto px-4">
+        <div className="mb-4">
+          <h2 className="text-xs font-semibold text-[#087F75] uppercase tracking-wider font-mono">
+            Analytical Architecture
           </h2>
-          <h3 className="text-3xl font-extrabold text-white mt-2">
-            Multi-Modal Threat Identification
-          </h3>
-          <p className="text-sm text-slate-400 mt-2">
-            Comprehensive security inspection tailored for everyday digital interactions.
+          <p className="text-base sm:text-lg font-bold text-[#172321] mt-0.5">
+            4-Stage Multi-Modal Detection Pipeline
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Card 1: Text */}
-          <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 flex flex-col justify-between hover:border-cyan-500/40 transition-all group">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-4 group-hover:scale-110 transition-transform">
-                <MessageSquare className="w-6 h-6" />
+              <div className="w-8 h-8 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-2.5 text-xs font-bold font-mono">
+                01
               </div>
-              <h4 className="text-base font-bold text-white font-mono">TEXT ANALYSIS</h4>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                Analyze suspicious SMS, WhatsApp messages, social DMs, and urgent communications for psychological manipulation.
+              <h4 className="text-xs font-bold text-[#172321]">Input Ingestion</h4>
+              <p className="text-[11px] text-[#697773] mt-1 leading-relaxed">
+                Accepts raw text messages, URLs, structured email headers, or screenshot pixels in-memory.
               </p>
             </div>
-            <Link to="/analyze?tab=text" className="mt-6 text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-              <span>Scan Text</span> &rarr;
+            <div className="mt-3 pt-2 border-t border-[#E2E8E5] text-[10px] font-mono text-[#087F75]">
+              Safe In-Memory Buffer
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-8 h-8 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-2.5 text-xs font-bold font-mono">
+                02
+              </div>
+              <h4 className="text-xs font-bold text-[#172321]">Feature Extraction</h4>
+              <p className="text-[11px] text-[#697773] mt-1 leading-relaxed">
+                Computes Shannon entropy, subdomain nesting, urgency keywords, and brand typosquatting.
+              </p>
+            </div>
+            <div className="mt-3 pt-2 border-t border-[#E2E8E5] text-[10px] font-mono text-[#087F75]">
+              Lexical &amp; Heuristic
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-8 h-8 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-2.5 text-xs font-bold font-mono">
+                03
+              </div>
+              <h4 className="text-xs font-bold text-[#172321]">Weighted Scoring</h4>
+              <p className="text-[11px] text-[#697773] mt-1 leading-relaxed">
+                Integrates AI Bayesian classification (40%), rule engine (35%), and URL metrics (25%).
+              </p>
+            </div>
+            <div className="mt-3 pt-2 border-t border-[#E2E8E5] text-[10px] font-mono text-[#087F75]">
+              Convergent Risk Index
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-8 h-8 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-2.5 text-xs font-bold font-mono">
+                04
+              </div>
+              <h4 className="text-xs font-bold text-[#172321]">Forensic Advisory</h4>
+              <p className="text-[11px] text-[#697773] mt-1 leading-relaxed">
+                Highlights malicious token spans and generates deterministic Do's &amp; Don'ts protocols.
+              </p>
+            </div>
+            <div className="mt-3 pt-2 border-t border-[#E2E8E5] text-[10px] font-mono text-[#087F75]">
+              Explainable Guidance
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Four Capability Cards */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-6">
+          <h2 className="text-xs font-semibold text-[#087F75] uppercase tracking-wider font-mono">
+            Supported Modalities
+          </h2>
+          <h3 className="text-base sm:text-lg font-bold text-[#172321] mt-0.5">
+            Forensic Inspection Capabilities
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: Text */}
+          <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 flex flex-col justify-between shadow-xs hover:border-[#087F75]/40 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
+            <div>
+              <div className="w-10 h-10 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-3 group-hover:scale-105 transition-transform duration-200">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <h4 className="text-sm font-bold text-[#172321] font-sans">Message Analysis</h4>
+              <p className="text-xs text-[#697773] mt-1.5 leading-relaxed">
+                Evaluates SMS, chat messages, and social DMs for behavioral manipulation, fear tactics, and artificial urgency.
+              </p>
+            </div>
+            <Link to="/analyze?tab=text" className="mt-4 text-xs font-medium text-[#087F75] hover:text-[#076c64] flex items-center gap-1 group-hover:gap-1.5 transition-all">
+              <span>Inspect Text</span> &rarr;
             </Link>
           </div>
 
           {/* Card 2: URL */}
-          <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 flex flex-col justify-between hover:border-cyan-500/40 transition-all group">
+          <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 flex flex-col justify-between shadow-xs hover:border-[#087F75]/40 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mb-4 group-hover:scale-110 transition-transform">
-                <Globe className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-3 group-hover:scale-105 transition-transform duration-200">
+                <Globe className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-white font-mono">STATIC URL ANALYSIS</h4>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                Inspect suspicious hyperlinks safely in isolation without ever visiting or downloading untrusted payloads.
+              <h4 className="text-sm font-bold text-[#172321] font-sans">Static URL Analysis</h4>
+              <p className="text-xs text-[#697773] mt-1.5 leading-relaxed">
+                Calculates Shannon entropy, subdomain nesting, and brand typosquatting without connecting to target hosts.
               </p>
             </div>
-            <Link to="/analyze?tab=url" className="mt-6 text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-              <span>Scan URL</span> &rarr;
+            <Link to="/analyze?tab=url" className="mt-4 text-xs font-medium text-[#087F75] hover:text-[#076c64] flex items-center gap-1 group-hover:gap-1.5 transition-all">
+              <span>Inspect URL</span> &rarr;
             </Link>
           </div>
 
           {/* Card 3: Email */}
-          <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 flex flex-col justify-between hover:border-cyan-500/40 transition-all group">
+          <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 flex flex-col justify-between shadow-xs hover:border-[#087F75]/40 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
-                <FileText className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-3 group-hover:scale-105 transition-transform duration-200">
+                <FileText className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-white font-mono">EMAIL INSPECTION</h4>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                Detect sender name spoofing, display header mismatches, body traps, and embedded malicious links.
+              <h4 className="text-sm font-bold text-[#172321] font-sans">Email Inspection</h4>
+              <p className="text-xs text-[#697773] mt-1.5 leading-relaxed">
+                Identifies sender display name mismatches, reply-to anomalies, deceptive subjects, and body trap links.
               </p>
             </div>
-            <Link to="/analyze?tab=email" className="mt-6 text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-              <span>Scan Email</span> &rarr;
+            <Link to="/analyze?tab=email" className="mt-4 text-xs font-medium text-[#087F75] hover:text-[#076c64] flex items-center gap-1 group-hover:gap-1.5 transition-all">
+              <span>Inspect Email</span> &rarr;
             </Link>
           </div>
 
           {/* Card 4: Screenshot OCR */}
-          <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 flex flex-col justify-between hover:border-cyan-500/40 transition-all group">
+          <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 flex flex-col justify-between shadow-xs hover:border-[#087F75]/40 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
-                <ImageIcon className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-3 group-hover:scale-105 transition-transform duration-200">
+                <ImageIcon className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-white font-mono">SCREENSHOT OCR</h4>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                Extract text and deceptive links directly from phone screenshots of messages, banking portals, or scam popups.
+              <h4 className="text-sm font-bold text-[#172321] font-sans">Screenshot OCR</h4>
+              <p className="text-xs text-[#697773] mt-1.5 leading-relaxed">
+                Parses in-memory image pixels to extract textual content and suspicious URLs from mobile screenshots.
               </p>
             </div>
-            <Link to="/analyze?tab=screenshot" className="mt-6 text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+            <Link to="/analyze?tab=screenshot" className="mt-4 text-xs font-medium text-[#087F75] hover:text-[#076c64] flex items-center gap-1 group-hover:gap-1.5 transition-all">
               <span>Upload Image</span> &rarr;
             </Link>
           </div>
         </div>
       </section>
 
-      {/* College Minor Project / Educational CTA Banner */}
+      {/* Educational CTA Banner */}
       <section className="max-w-5xl mx-auto px-4">
-        <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/40 border border-slate-800 p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold text-white font-sans">
-              Learn to Spot Phishing Tactics Independently
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-6 sm:p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs">
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-[#172321] font-sans">
+              Interactive Cybersecurity Training Academy
             </h3>
-            <p className="text-sm text-slate-400 max-w-xl">
-              PhishLens is built as an educational cybersecurity shield. Test your knowledge with interactive threat scenarios and quizzes.
+            <p className="text-xs text-[#697773] max-w-xl">
+              Test threat-spotting reflexes through curated real-world attack scenarios and immediate forensic explanations.
             </p>
           </div>
           <Link
             to="/learn"
-            className="shrink-0 px-6 py-3 rounded-xl font-mono text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition-colors flex items-center gap-2"
+            className="shrink-0 px-5 py-2.5 rounded-lg text-xs font-semibold bg-[#087F75] hover:bg-[#076c64] active:scale-[0.98] text-white transition-all duration-150 flex items-center gap-2 shadow-xs"
           >
-            <span>Start Learning Quiz</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Start Practice Quiz</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </section>

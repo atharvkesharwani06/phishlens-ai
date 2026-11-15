@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { AlertCircle, Sparkles, X, Info, ShieldAlert } from 'lucide-react';
-import { HighlightSpan, ThreatSeverity } from '../types';
+import { Search, X, Info, ShieldAlert } from 'lucide-react';
+import { HighlightSpan } from '../types';
 import { ThreatBadge } from './ThreatBadge';
 
 interface InteractiveEvidenceViewerProps {
@@ -16,25 +16,20 @@ export const InteractiveEvidenceViewer: React.FC<InteractiveEvidenceViewerProps>
     highlights.length > 0 ? highlights[0] : null
   );
 
-  // If no highlights or plain text, render plain view
   if (!originalText) {
     return (
-      <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-400 text-sm italic">
-        No original content preview available.
+      <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 text-sm italic">
+        No content preview available for this entry.
       </div>
     );
   }
 
-  // Render text with interactive highlighted spans
   const renderHighlightedText = () => {
     if (!highlights || highlights.length === 0) {
-      return <span className="text-slate-200 whitespace-pre-wrap">{originalText}</span>;
+      return <span className="text-slate-800 whitespace-pre-wrap">{originalText}</span>;
     }
 
-    // Sort highlights by length descending to match longer phrases first
     const sortedHighlights = [...highlights].filter(h => h.text && h.text.trim().length > 0);
-    
-    // Create regex from highlight phrases
     const escapeRegex = (s: string) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
     const pattern = new RegExp(`(${sortedHighlights.map(h => escapeRegex(h.text)).join('|')})`, 'gi');
     
@@ -47,93 +42,96 @@ export const InteractiveEvidenceViewer: React.FC<InteractiveEvidenceViewerProps>
 
       if (matched) {
         const isSelected = selectedHighlight?.text.toLowerCase() === matched.text.toLowerCase();
-        let bgStyle = 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30';
+        let bgStyle = 'bg-[#B77932]/10 text-[#B77932] border-[#B77932]/30 hover:bg-[#B77932]/20';
         
         if (matched.severity === 'CRITICAL') {
-          bgStyle = 'bg-red-500/25 text-red-200 border-red-500/50 hover:bg-red-500/40';
+          bgStyle = 'bg-[#C74747]/10 text-[#C74747] border-[#C74747]/30 hover:bg-[#C74747]/20';
         } else if (matched.severity === 'HIGH') {
-          bgStyle = 'bg-orange-500/25 text-orange-200 border-orange-500/50 hover:bg-orange-500/40';
+          bgStyle = 'bg-[#B77932]/15 text-[#B77932] border-[#B77932]/35 hover:bg-[#B77932]/25';
         }
 
         return (
           <button
             key={idx}
+            type="button"
             onClick={() => setSelectedHighlight(matched)}
-            className={`inline-flex items-center px-1.5 py-0.5 mx-0.5 rounded font-semibold border text-sm transition-all cursor-pointer underline decoration-dotted underline-offset-2 ${bgStyle} ${
-              isSelected ? 'ring-2 ring-cyan-400 scale-[1.02] shadow-lg shadow-cyan-500/20' : ''
+            className={`inline-flex items-center px-1.5 py-0.5 mx-0.5 rounded font-mono font-medium border text-xs transition-colors cursor-pointer ${bgStyle} ${
+              isSelected ? 'ring-2 ring-[#087F75] ring-offset-1 font-semibold' : ''
             }`}
-            title="Click to see why PhishLens flagged this phrase"
+            title="Inspect forensic indicator details"
           >
             <span>{part}</span>
           </button>
         );
       }
 
-      return <span key={idx} className="text-slate-200 whitespace-pre-wrap">{part}</span>;
+      return <span key={idx} className="text-[#172321] whitespace-pre-wrap">{part}</span>;
     });
   };
 
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 overflow-hidden shadow-xl">
+    <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] overflow-hidden shadow-xs">
       {/* Card Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 bg-slate-800/60 border-b border-slate-800">
+      <div className="flex items-center justify-between px-5 py-3 bg-[#F7F8F6] border-b border-[#E2E8E5]">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-cyan-400" />
-          <span className="font-semibold text-sm text-slate-100 font-mono tracking-wide">
-            EXPLAINABLE EVIDENCE SCANNER
+          <Search className="w-4 h-4 text-[#087F75]" />
+          <span className="font-semibold text-xs text-[#172321] font-sans tracking-wide uppercase">
+            Interactive Evidence Span Viewer
           </span>
         </div>
-        <span className="text-xs text-cyan-400/90 font-mono flex items-center gap-1.5">
-          <Info className="w-3.5 h-3.5" />
-          Click any highlighted phrase to inspect AI reasoning
+        <span className="text-xs text-[#697773] font-sans flex items-center gap-1.5 hidden sm:flex">
+          <Info className="w-3.5 h-3.5 text-[#697773]" />
+          Click highlighted spans to inspect underlying rationale
         </span>
       </div>
 
       {/* Main Text Content Area */}
-      <div className="p-5 font-mono text-sm leading-relaxed border-b border-slate-800 bg-[#0A0F1D]/80">
+      <div className="p-5 font-mono text-xs leading-relaxed border-b border-[#E2E8E5] bg-[#FFFFFF] text-[#172321] overflow-x-auto">
         {renderHighlightedText()}
       </div>
 
       {/* Selected Indicator Explanation Drawer */}
       {selectedHighlight ? (
-        <div className="p-4 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border-t border-cyan-500/30">
+        <div className="p-4 bg-[#F7F8F6]/70 border-t border-[#E2E8E5]">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 mt-0.5">
-                <ShieldAlert className="w-5 h-5 text-cyan-400" />
+              <div className="p-1.5 rounded-md bg-[#E6F4F1] border border-[#087F75]/20 text-[#087F75] mt-0.5">
+                <ShieldAlert className="w-4 h-4 text-[#087F75]" />
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
-                    WHY IS THIS SUSPICIOUS?
+                  <span className="text-xs font-sans font-semibold text-[#172321]">
+                    Detection Rationale:
                   </span>
                   <ThreatBadge severity={selectedHighlight.severity} size="sm" />
                 </div>
 
                 <div className="mt-1 flex items-baseline gap-2">
-                  <span className="text-xs text-slate-400">Flagged Phrase:</span>
-                  <code className="text-xs font-bold text-cyan-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                  <span className="text-xs text-[#697773] font-sans">Flagged Token:</span>
+                  <code className="text-xs font-mono font-semibold text-[#172321] bg-[#FFFFFF] px-2 py-0.5 rounded border border-[#E2E8E5]">
                     "{selectedHighlight.text}"
                   </code>
                 </div>
 
-                <p className="mt-2 text-sm text-slate-200 leading-relaxed">
+                <p className="mt-2 text-xs text-[#172321] leading-relaxed font-sans">
                   {selectedHighlight.reason}
                 </p>
               </div>
             </div>
 
             <button
+              type="button"
               onClick={() => setSelectedHighlight(null)}
-              className="text-slate-400 hover:text-slate-200 p-1 rounded hover:bg-slate-800 transition-colors"
+              className="text-[#697773] hover:text-[#172321] p-1 rounded hover:bg-[#E2E8E5]/50 transition-colors cursor-pointer"
+              aria-label="Close details"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
       ) : (
-        <div className="px-5 py-3 bg-slate-950 text-slate-500 text-xs font-mono flex items-center justify-between">
-          <span>{highlights.length} threat patterns identified in text.</span>
+        <div className="px-5 py-2.5 bg-[#F7F8F6] text-[#697773] text-xs font-sans flex items-center justify-between">
+          <span>{highlights.length} suspicious pattern span(s) identified in input.</span>
           <span>Click any colored keyword to view forensic breakdown.</span>
         </div>
       )}

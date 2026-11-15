@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { 
   BookOpen, 
   HelpCircle, 
-  ShieldCheck, 
   AlertTriangle, 
   CheckCircle2, 
   XCircle, 
@@ -14,7 +13,8 @@ import {
   Gift, 
   ArrowRight, 
   RotateCcw, 
-  Award 
+  Award,
+  Loader2
 } from 'lucide-react';
 import { AnalysisService } from '../services/api';
 import { EducationModule, QuizQuestion } from '../types';
@@ -27,20 +27,28 @@ export const LearnPage: React.FC = () => {
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const [modData, quizData] = await Promise.all([
+        AnalysisService.getEducationModules(),
+        AnalysisService.getQuizQuestions(),
+      ]);
+      setModules(modData || []);
+      setQuestions(quizData || []);
+    } catch (err) {
+      console.error('Failed to load education data:', err);
+      setError('Unable to load educational scenarios from server.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [modData, quizData] = await Promise.all([
-          AnalysisService.getEducationModules(),
-          AnalysisService.getQuizQuestions(),
-        ]);
-        setModules(modData);
-        setQuestions(quizData);
-      } catch (err) {
-        console.error('Failed to load education data:', err);
-      }
-    };
     fetchData();
   }, []);
 
@@ -89,144 +97,164 @@ export const LearnPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 space-y-16">
+    <div className="max-w-6xl mx-auto py-4 px-4 sm:px-6 space-y-10 font-sans animate-page-enter">
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-4">
-          <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-          <span>CYBER DEFENSE ACADEMY</span>
+      <div className="text-center max-w-2xl mx-auto">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E6F4F1] border border-[#087F75]/20 text-[#087F75] text-xs font-medium mb-3 shadow-xs">
+          <BookOpen className="w-3.5 h-3.5 text-[#087F75]" />
+          <span>Security Education &amp; Reflex Training</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
-          LEARN TO SPOT DIGITAL THREATS
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#172321] tracking-tight font-sans">
+          Cyber Threat Defense Academy
         </h1>
-        <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-          Master the psychological and technical tactics used by cyber criminals, and test your defensive reflexes in our interactive spot-the-phish simulator.
+        <p className="text-xs sm:text-sm text-[#697773] mt-1.5 leading-relaxed">
+          Master the psychological and technical heuristics leveraged in digital social engineering, and test your instincts in the scenario simulator.
         </p>
       </div>
 
       {/* Interactive Quiz Simulator Section */}
-      <section className="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-[#0A1020] border border-cyan-500/30 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">
-              <HelpCircle className="w-5 h-5" />
+      <section className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-6 sm:p-7 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[#E2E8E5] mb-5">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-md bg-[#E6F4F1] border border-[#087F75]/20 text-[#087F75]">
+              <HelpCircle className="w-4 h-4 text-[#087F75]" />
             </div>
             <div>
-              <h2 className="text-base font-bold font-mono text-white">
-                SPOT-THE-PHISH INTERACTIVE QUIZ
+              <h2 className="text-sm font-bold text-[#172321] font-sans uppercase tracking-wide">
+                Spot-The-Phish Verification Quiz
               </h2>
-              <p className="text-xs text-slate-400">Can you distinguish deceptive attacks from legitimate messages?</p>
+              <p className="text-xs text-[#697773] font-sans">Can you distinguish deceptive lures from verified legitimate messages?</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
-            <span>Score: {score}/{questions.length}</span>
-            <span>•</span>
-            <span>Question {currentQuizIdx + 1} of {questions.length}</span>
+          <div className="flex items-center gap-2 text-xs font-mono text-[#172321] bg-[#F7F8F6] px-3 py-1 rounded-md border border-[#E2E8E5]">
+            <span>Score: <strong className="text-[#087F75]">{score}/{questions.length}</strong></span>
+            <span className="text-[#E2E8E5]">|</span>
+            <span>Scenario {questions.length > 0 ? currentQuizIdx + 1 : 0} of {questions.length}</span>
           </div>
         </div>
 
-        {!quizCompleted && currentQ ? (
-          <div className="space-y-6">
+        {isLoading ? (
+          <div className="py-12 flex flex-col items-center justify-center text-[#697773] space-y-2 font-sans">
+            <Loader2 className="w-5 h-5 animate-spin text-[#087F75]" />
+            <span className="text-xs">Loading threat verification scenarios...</span>
+          </div>
+        ) : error && questions.length === 0 ? (
+          <div className="py-8 text-center space-y-3 font-sans">
+            <p className="text-xs text-[#C74747]">{error}</p>
+            <button
+              type="button"
+              onClick={fetchData}
+              className="px-4 py-1.5 rounded-md bg-[#087F75] hover:bg-[#076c64] text-white text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Retry</span>
+            </button>
+          </div>
+        ) : !quizCompleted && currentQ ? (
+          <div className="space-y-5">
             {/* Scenario Card */}
-            <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-3 font-mono">
-              <div className="flex items-center justify-between text-xs text-slate-500">
+            <div className="p-4 rounded-lg bg-[#F7F8F6] border border-[#E2E8E5] space-y-2.5 font-sans">
+              <div className="flex items-center justify-between text-[11px] font-mono text-[#697773]">
                 <span>SCENARIO #{currentQ.id} • {currentQ.category.toUpperCase()}</span>
-                {currentQ.sender && <span>Sender: {currentQ.sender}</span>}
+                {currentQ.sender && <span>Sender: <strong className="text-[#172321]">{currentQ.sender}</strong></span>}
               </div>
 
-              <div className="text-sm sm:text-base text-slate-100 font-semibold leading-relaxed">
+              <div className="text-xs sm:text-sm text-[#172321] font-mono leading-relaxed bg-[#FFFFFF] p-3 rounded border border-[#E2E8E5]">
                 "{currentQ.scenario}"
               </div>
 
               {currentQ.url && (
-                <div className="text-xs text-cyan-400 bg-slate-900 p-2 rounded border border-slate-800 truncate">
-                  Target Link: {currentQ.url}
+                <div className="text-xs font-mono text-[#697773] bg-[#FFFFFF] p-2 rounded border border-[#E2E8E5] truncate">
+                  Target Link: <span className="font-semibold text-[#087F75]">{currentQ.url}</span>
                 </div>
               )}
             </div>
 
             {/* Question Prompt & Buttons */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-center font-mono text-slate-200">
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-center font-sans text-[#172321] uppercase tracking-wide">
                 {currentQ.question}
               </h3>
 
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+              <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
                 <button
+                  type="button"
                   disabled={isAnswerSubmitted}
                   onClick={() => handleSelectAnswer(true)}
-                  className={`py-3 px-6 rounded-xl font-mono text-xs font-bold transition-all border flex items-center justify-center gap-2 ${
+                  className={`py-2.5 px-4 rounded-lg text-xs font-semibold font-sans active:scale-[0.98] transition-all duration-150 border flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-default ${
                     isAnswerSubmitted
                       ? currentQ.is_phishing
-                        ? 'bg-red-500/20 border-red-500 text-red-300'
+                        ? 'bg-[#C74747]/15 border-[#C74747] text-[#C74747] font-bold'
                         : selectedAnswer === true
-                        ? 'bg-slate-800 border-slate-700 text-slate-500'
-                        : 'bg-slate-900 border-slate-800 text-slate-600'
-                      : 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30 hover:scale-[1.02]'
+                        ? 'bg-[#F7F8F6] border-[#E2E8E5] text-[#697773]'
+                        : 'bg-[#FFFFFF] border-[#E2E8E5] text-[#697773]'
+                      : 'bg-[#C74747]/10 hover:bg-[#C74747]/20 text-[#C74747] border-[#C74747]/30'
                   }`}
                 >
-                  <AlertTriangle className="w-4 h-4" />
-                  <span>SUSPICIOUS / PHISHING</span>
+                  <AlertTriangle className="w-3.5 h-3.5 text-[#C74747]" />
+                  <span>Suspicious / Phishing</span>
                 </button>
 
                 <button
+                  type="button"
                   disabled={isAnswerSubmitted}
                   onClick={() => handleSelectAnswer(false)}
-                  className={`py-3 px-6 rounded-xl font-mono text-xs font-bold transition-all border flex items-center justify-center gap-2 ${
+                  className={`py-2.5 px-4 rounded-lg text-xs font-semibold font-sans active:scale-[0.98] transition-all duration-150 border flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-default ${
                     isAnswerSubmitted
                       ? !currentQ.is_phishing
-                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
+                        ? 'bg-[#39805A]/15 border-[#39805A] text-[#39805A] font-bold'
                         : selectedAnswer === false
-                        ? 'bg-slate-800 border-slate-700 text-slate-500'
-                        : 'bg-slate-900 border-slate-800 text-slate-600'
-                      : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:scale-[1.02]'
+                        ? 'bg-[#F7F8F6] border-[#E2E8E5] text-[#697773]'
+                        : 'bg-[#FFFFFF] border-[#E2E8E5] text-[#697773]'
+                      : 'bg-[#39805A]/10 hover:bg-[#39805A]/20 text-[#39805A] border-[#39805A]/30'
                   }`}
                 >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>SAFE / LEGITIMATE</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#39805A]" />
+                  <span>Safe / Legitimate</span>
                 </button>
               </div>
             </div>
 
             {/* Answer Explanation Box */}
             {isAnswerSubmitted && (
-              <div className="p-5 rounded-xl bg-slate-950 border border-cyan-500/40 space-y-3 animate-fade-in">
+              <div className="p-4 rounded-lg bg-[#F7F8F6] border border-[#E2E8E5] space-y-2.5 text-xs font-sans">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-mono font-bold">
+                  <div className="flex items-center gap-1.5 font-semibold">
                     {selectedAnswer === currentQ.is_phishing ? (
-                      <span className="text-emerald-400 flex items-center gap-1">
-                        <CheckCircle2 className="w-4 h-4" /> CORRECT! Excellent cyber reflexes.
+                      <span className="text-[#39805A] flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4 text-[#39805A]" /> Correct Assessment
                       </span>
                     ) : (
-                      <span className="text-red-400 flex items-center gap-1">
-                        <XCircle className="w-4 h-4" /> INCORRECT! Here is why this was a trap.
+                      <span className="text-[#C74747] flex items-center gap-1">
+                        <XCircle className="w-4 h-4 text-[#C74747]" /> Incorrect Assessment
                       </span>
                     )}
                   </div>
-                  <span className="text-xs font-mono text-slate-400">
-                    Verdict: {currentQ.is_phishing ? 'PHISHING ATTACK' : 'LEGITIMATE COMMUNICATION'}
+                  <span className="text-[11px] font-mono text-[#697773] uppercase">
+                    True Class: {currentQ.is_phishing ? 'PHISHING' : 'LEGITIMATE'}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-200 leading-relaxed font-sans">
+                <p className="text-[#172321] leading-relaxed">
                   {currentQ.explanation}
                 </p>
 
-                <div className="flex flex-wrap gap-2 pt-1">
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {currentQ.indicators.map((ind, i) => (
-                    <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-cyan-300">
+                    <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FFFFFF] border border-[#E2E8E5] text-[#172321]">
                       • {ind}
                     </span>
                   ))}
                 </div>
 
-                <div className="pt-3 text-right">
+                <div className="pt-2 text-right">
                   <button
+                    type="button"
                     onClick={handleNextQuestion}
-                    className="px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs font-bold transition-all inline-flex items-center gap-1.5"
+                    className="px-4 py-1.5 rounded-md bg-[#087F75] hover:bg-[#076c64] text-white text-xs font-sans font-medium transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
                   >
-                    <span>{currentQuizIdx + 1 === questions.length ? 'View Final Results' : 'Next Question'}</span>
+                    <span>{currentQuizIdx + 1 === questions.length ? 'View Summary Score' : 'Next Scenario'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -234,90 +262,96 @@ export const LearnPage: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="py-8 text-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mx-auto">
-              <Award className="w-8 h-8" />
+          <div className="py-6 text-center space-y-3 font-sans">
+            <div className="w-12 h-12 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mx-auto">
+              <Award className="w-6 h-6" />
             </div>
-            <h3 className="text-2xl font-extrabold font-mono text-white">QUIZ COMPLETED!</h3>
-            <p className="text-sm font-mono text-slate-300">
-              You scored <strong className="text-cyan-400 text-lg">{score} / {questions.length}</strong> ({Math.round((score / questions.length) * 100)}%)
+            <h3 className="text-lg font-bold text-[#172321] font-sans">Quiz Completed</h3>
+            <p className="text-xs font-sans text-[#697773]">
+              You correctly classified <strong className="font-mono text-[#087F75] text-sm">{score} of {questions.length}</strong> scenarios ({Math.round((score / (questions.length || 1)) * 100)}%).
             </p>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
-              {score === questions.length
-                ? 'Outstanding! You demonstrated expert-level threat recognition.'
-                : 'Great effort! Review the defensive topic cards below to reinforce your cyber instincts.'}
+            <p className="text-xs text-[#697773] max-w-md mx-auto">
+              Review the detailed defensive modules below to inspect how individual technical indicators operate.
             </p>
             <button
+              type="button"
               onClick={handleRestartQuiz}
-              className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs font-bold transition-all inline-flex items-center gap-2"
+              className="px-4 py-2 rounded-lg bg-[#087F75] hover:bg-[#076c64] text-white text-xs font-sans font-medium transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Retry Quiz</span>
+              <span>Retry Exercise</span>
             </button>
           </div>
         )}
       </section>
 
       {/* 6 Defensive Learning Topic Cards */}
-      <section className="space-y-6">
+      <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold text-white font-mono">
-            CYBERSECURITY DEFENSIVE MODULES
+          <h2 className="text-base font-bold text-[#172321] font-sans uppercase tracking-wide">
+            Defensive Cybersecurity Modules
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Detailed breakdown of social engineering tricks, deceptive tactics, and defensive countermeasures.
+          <p className="text-xs text-[#697773] mt-0.5">
+            Technical and behavioral breakdowns of social engineering mechanisms and mitigations.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {modules.map((mod) => {
-            const Icon = getModuleIcon(mod.id);
-            return (
-              <div
-                key={mod.id}
-                className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 flex flex-col justify-between hover:border-slate-700 transition-all shadow-lg space-y-4"
-              >
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-mono font-bold text-slate-100 text-sm">
-                      {mod.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                    {mod.description}
-                  </p>
-
-                  <div className="space-y-3 font-sans text-xs">
-                    <div className="p-3 rounded-lg bg-slate-950 border border-slate-800/80">
-                      <strong className="text-red-400 font-mono text-[11px] block uppercase mb-0.5">
-                        WHAT IT LOOKS LIKE
-                      </strong>
-                      <p className="text-slate-300 font-mono text-[11px]">{mod.what_it_looks_like}</p>
+        {isLoading ? (
+          <div className="py-8 flex items-center justify-center text-[#697773] text-xs font-sans">
+            <Loader2 className="w-4 h-4 animate-spin text-[#087F75] mr-2" />
+            <span>Loading defensive modules...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {modules.map((mod) => {
+              const Icon = getModuleIcon(mod.id);
+              return (
+                <div
+                  key={mod.id}
+                  className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 flex flex-col justify-between shadow-xs hover:border-[#087F75]/40 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 space-y-3"
+                >
+                  <div>
+                    <div className="flex items-center gap-2.5 mb-2.5">
+                      <div className="p-1.5 rounded-md bg-[#E6F4F1] border border-[#087F75]/20 text-[#087F75]">
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-sans font-bold text-[#172321] text-xs">
+                        {mod.title}
+                      </h3>
                     </div>
 
-                    <div className="p-3 rounded-lg bg-slate-950 border border-slate-800/80">
-                      <strong className="text-amber-400 font-mono text-[11px] block uppercase mb-0.5">
-                        WHY ATTACKERS USE IT
-                      </strong>
-                      <p className="text-slate-300 leading-snug">{mod.why_attackers_use_it}</p>
-                    </div>
+                    <p className="text-xs text-[#697773] leading-relaxed mb-3 font-sans">
+                      {mod.description}
+                    </p>
 
-                    <div className="p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
-                      <strong className="text-emerald-400 font-mono text-[11px] block uppercase mb-0.5">
-                        HOW TO DEFEND YOURSELF
-                      </strong>
-                      <p className="text-slate-200 leading-snug">{mod.how_to_protect}</p>
+                    <div className="space-y-2 font-sans text-xs">
+                      <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5]">
+                        <strong className="text-[#172321] text-[10px] uppercase block mb-0.5 font-semibold">
+                          Typical Pattern
+                        </strong>
+                        <p className="text-[#697773] font-mono text-[11px] leading-snug">{mod.what_it_looks_like}</p>
+                      </div>
+
+                      <div className="p-2.5 rounded-md bg-[#B77932]/10 border border-[#B77932]/25">
+                        <strong className="text-[#B77932] text-[10px] uppercase block mb-0.5 font-bold">
+                          Attacker Motivation
+                        </strong>
+                        <p className="text-[#172321] text-xs leading-snug">{mod.why_attackers_use_it}</p>
+                      </div>
+
+                      <div className="p-2.5 rounded-md bg-[#39805A]/10 border border-[#39805A]/25">
+                        <strong className="text-[#39805A] text-[10px] uppercase block mb-0.5 font-bold">
+                          Defense Protocol
+                        </strong>
+                        <p className="text-[#172321] text-xs leading-snug">{mod.how_to_protect}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </section>
     </div>
   );

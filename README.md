@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/Frontend-React_19_TypeScript-61DAFB.svg?logo=react&logoColor=black)](https://react.dev)
 [![TailwindCSS](https://img.shields.io/badge/Styles-Tailwind_CSS-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Status](https://img.shields.io/badge/Status-College_Minor_Project-success.svg)](#)
+[![Status](https://img.shields.io/badge/Status-Explainable_Cybersecurity_System-087F75.svg)](#)
 
 ---
 
@@ -40,7 +40,7 @@ For every detection, PhishLens answers:
 
 ---
 
-## 🎯 2. College Minor Project Objectives & Scope
+## 🎯 2. Project Objectives & Engineering Scope
 
 PhishLens places AI in the **critical path**:
 - Without the hybrid AI classifier, linguistic feature extractor, and static URL analyzer, threat explainability fails.

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, XCircle, ShieldCheck, AlertOctagon } from 'lucide-react';
+import { CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
 import { DosAndDonts } from '../types';
 
 interface DosAndDontsCardProps {
@@ -9,29 +9,29 @@ interface DosAndDontsCardProps {
 
 export const DosAndDontsCard: React.FC<DosAndDontsCardProps> = ({
   dosAndDonts,
-  isPhishing = true,
+  isPhishing: _isPhishing = true,
 }) => {
   return (
-    <div className="rounded-xl bg-slate-900/90 border border-slate-800 overflow-hidden shadow-xl">
-      <div className="px-5 py-3.5 bg-slate-800/60 border-b border-slate-800 flex items-center justify-between">
+    <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] overflow-hidden shadow-xs">
+      <div className="px-5 py-3 bg-[#F7F8F6] border-b border-[#E2E8E5] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-cyan-400" />
-          <span className="font-semibold text-sm text-slate-100 font-mono tracking-wide">
-            RECOMMENDED ACTIONS FOR USER SAFETY
+          <ShieldCheck className="w-4 h-4 text-[#087F75]" />
+          <span className="font-semibold text-xs text-[#172321] font-sans tracking-wide uppercase">
+            Defensive Guidance &amp; Recommended Actions
           </span>
         </div>
-        <span className="text-xs font-mono text-slate-400">
-          Non-Technical Defensive Protocol
+        <span className="text-xs font-sans text-[#697773]">
+          Operator Action Protocol
         </span>
       </div>
 
       <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* DO NOT Column */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2 pb-2 border-b border-red-500/20">
-            <XCircle className="w-4 h-4 text-red-400" />
-            <h4 className="font-bold text-sm text-red-400 font-mono uppercase tracking-wider">
-              WHAT TO AVOID (DO NOT)
+          <div className="flex items-center gap-2 pb-2 border-b border-[#C74747]/20">
+            <XCircle className="w-4 h-4 text-[#C74747]" />
+            <h4 className="font-bold text-xs text-[#C74747] font-sans uppercase tracking-wider">
+              Strictly Avoid (Do Not)
             </h4>
           </div>
 
@@ -39,9 +39,9 @@ export const DosAndDontsCard: React.FC<DosAndDontsCardProps> = ({
             {dosAndDonts.donts && dosAndDonts.donts.map((item, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-2.5 text-xs text-slate-200 bg-red-500/5 border border-red-500/15 p-2.5 rounded-lg leading-relaxed font-sans"
+                className="flex items-start gap-2.5 text-xs text-[#172321] bg-[#C74747]/6 border border-[#C74747]/20 p-2.5 rounded-md leading-relaxed font-sans"
               >
-                <span className="text-red-400 shrink-0 font-bold">❌</span>
+                <span className="text-[#C74747] shrink-0 font-bold">✕</span>
                 <span>{item.replace(/^❌\s*/, '')}</span>
               </li>
             ))}
@@ -50,10 +50,10 @@ export const DosAndDontsCard: React.FC<DosAndDontsCardProps> = ({
 
         {/* DO Column */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2 pb-2 border-b border-emerald-500/20">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <h4 className="font-bold text-sm text-emerald-400 font-mono uppercase tracking-wider">
-              RECOMMENDED SAFE STEPS (DO)
+          <div className="flex items-center gap-2 pb-2 border-b border-[#39805A]/20">
+            <CheckCircle2 className="w-4 h-4 text-[#39805A]" />
+            <h4 className="font-bold text-xs text-[#39805A] font-sans uppercase tracking-wider">
+              Recommended Remediation (Do)
             </h4>
           </div>
 
@@ -61,9 +61,9 @@ export const DosAndDontsCard: React.FC<DosAndDontsCardProps> = ({
             {dosAndDonts.dos && dosAndDonts.dos.map((item, idx) => (
               <li
                 key={idx}
-                className="flex items-start gap-2.5 text-xs text-slate-200 bg-emerald-500/5 border border-emerald-500/15 p-2.5 rounded-lg leading-relaxed font-sans"
+                className="flex items-start gap-2.5 text-xs text-[#172321] bg-[#39805A]/6 border border-[#39805A]/20 p-2.5 rounded-md leading-relaxed font-sans"
               >
-                <span className="text-emerald-400 shrink-0 font-bold">✅</span>
+                <span className="text-[#39805A] shrink-0 font-bold">✓</span>
                 <span>{item.replace(/^✅\s*/, '')}</span>
               </li>
             ))}

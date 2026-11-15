@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Sparkles, 
-  Search, 
   ArrowRight, 
-  CheckCircle2, 
-  AlertOctagon, 
-  MessageSquare, 
-  FileText, 
-  Globe, 
-  Zap 
+  FlaskConical,
+  Loader2,
+  RotateCcw
 } from 'lucide-react';
 import { AnalysisService } from '../services/api';
 import { DemoCase } from '../types';
@@ -19,21 +14,24 @@ export const DemoCenterPage: React.FC = () => {
   const navigate = useNavigate();
   const [demoCases, setDemoCases] = useState<DemoCase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [executingId, setExecutingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDemos = async () => {
-      setIsLoading(true);
-      try {
-        const data = await AnalysisService.getDemoCases();
-        setDemoCases(data);
-      } catch (err) {
-        console.error('Failed to load demo cases:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchDemos = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await AnalysisService.getDemoCases();
+      setDemoCases(data || []);
+    } catch (err) {
+      console.error('Failed to load demo cases:', err);
+      setError('Unable to load demonstration scenarios from server.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchDemos();
   }, []);
 
@@ -65,96 +63,115 @@ export const DemoCenterPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 space-y-8">
+    <div className="max-w-6xl mx-auto py-4 px-4 sm:px-6 space-y-6 font-sans animate-page-enter">
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-4">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-          <span>COLLEGE MINOR PROJECT DEMONSTRATION SUITE</span>
+      <div className="text-center max-w-2xl mx-auto">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E6F4F1] border border-[#087F75]/20 text-[#087F75] text-xs font-medium mb-3 shadow-xs">
+          <FlaskConical className="w-3.5 h-3.5 text-[#087F75]" />
+          <span>Interactive Evaluation Scenarios</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
-          INTERACTIVE DEMO CENTER
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#172321] tracking-tight font-sans">
+          Interactive Demonstration Suite
         </h1>
-        <p className="text-sm text-slate-400 mt-2">
-          Test real-time explainable threat detection with pre-configured synthetic phishing, scam, and benign verification scenarios.
+        <p className="text-xs sm:text-sm text-[#697773] mt-1 leading-relaxed">
+          Evaluate real-time explainable threat detection with pre-configured synthetic phishing, scam, and verified benign test scenarios.
         </p>
       </div>
 
       {/* Grid of Demo Scenarios */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {demoCases.map((demo) => {
-          const isRunning = executingId === demo.id;
-          const isSafe = demo.expected_classification === 'SAFE';
+      {isLoading ? (
+        <div className="py-16 flex flex-col items-center justify-center text-[#697773] space-y-2 font-sans">
+          <Loader2 className="w-5 h-5 animate-spin text-[#087F75]" />
+          <span className="text-xs">Loading demonstration scenarios...</span>
+        </div>
+      ) : error && demoCases.length === 0 ? (
+        <div className="p-6 rounded-lg bg-[#C74747]/8 border border-[#C74747]/25 text-center space-y-3 font-sans">
+          <p className="text-xs text-[#C74747]">{error}</p>
+          <button
+            type="button"
+            onClick={fetchDemos}
+            className="px-4 py-1.5 rounded-md bg-[#087F75] hover:bg-[#076c64] text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Retry</span>
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {demoCases.map((demo) => {
+            const isRunning = executingId === demo.id;
+            const isSafe = demo.expected_classification === 'SAFE';
 
-          return (
-            <div
-              key={demo.id}
-              className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 p-6 flex flex-col justify-between shadow-xl transition-all"
-            >
-              <div className="space-y-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="text-[11px] font-mono text-cyan-400 font-bold uppercase tracking-wider block">
-                      Category: {demo.category} • {demo.input_type.toUpperCase()}
-                    </span>
-                    <h3 className="text-base font-bold text-white font-mono mt-0.5">
-                      {demo.title}
-                    </h3>
-                  </div>
-                  <ThreatBadge classification={demo.expected_classification} size="sm" />
-                </div>
-
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  {demo.description}
-                </p>
-
-                {/* Sample Snippet Preview Box */}
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300 space-y-1.5">
-                  {demo.input_type === 'email' ? (
+            return (
+              <div
+                key={demo.id}
+                className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 flex flex-col justify-between shadow-xs hover:border-[#087F75]/40 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <div className="text-slate-500 text-[10px]">From: {demo.content.sender_name} &lt;{demo.content.sender_email}&gt;</div>
-                      <div className="text-slate-400 text-[11px] font-bold">Subject: {demo.content.subject}</div>
-                      <div className="text-slate-300 mt-1 line-clamp-2">{demo.content.body}</div>
+                      <span className="text-[10px] font-mono text-[#087F75] font-semibold uppercase tracking-wider block">
+                        Category: {demo.category} • {demo.input_type.toUpperCase()}
+                      </span>
+                      <h3 className="text-sm font-bold text-[#172321] font-sans mt-0.5">
+                        {demo.title}
+                      </h3>
                     </div>
-                  ) : demo.input_type === 'url' ? (
-                    <div className="truncate text-amber-300">{demo.content.url}</div>
-                  ) : (
-                    <div className="line-clamp-3 text-slate-200">{demo.content.text}</div>
-                  )}
+                    <ThreatBadge classification={demo.expected_classification} size="sm" />
+                  </div>
+
+                  <p className="text-xs text-[#697773] leading-relaxed font-sans">
+                    {demo.description}
+                  </p>
+
+                  {/* Sample Snippet Preview Box */}
+                  <div className="p-3 rounded-lg bg-[#F7F8F6] border border-[#E2E8E5] font-mono text-xs text-[#172321] space-y-1">
+                    {demo.input_type === 'email' ? (
+                      <div>
+                        <div className="text-[#697773] text-[10px]">From: {demo.content.sender_name} &lt;{demo.content.sender_email}&gt;</div>
+                        <div className="text-[#172321] text-[11px] font-bold">Subject: {demo.content.subject}</div>
+                        <div className="text-[#172321] mt-1 line-clamp-2">{demo.content.body}</div>
+                      </div>
+                    ) : demo.input_type === 'url' ? (
+                      <div className="truncate text-[#172321] font-semibold">{demo.content.url}</div>
+                    ) : (
+                      <div className="line-clamp-3 text-[#172321]">{demo.content.text}</div>
+                    )}
+                  </div>
+
+                  {/* Expected Threat Parameters */}
+                  <div className="flex items-center justify-between text-[11px] font-sans text-[#697773] pt-1">
+                    <span>Category: <strong className="font-mono text-[#172321]">{demo.expected_threat_type.replace(/_/g, ' ')}</strong></span>
+                    <span>Expected Score: <strong className={`font-mono ${isSafe ? 'text-[#39805A]' : 'text-[#C74747]'}`}>{demo.expected_risk_score}/100</strong></span>
+                  </div>
                 </div>
 
-                {/* Expected Threat Parameters */}
-                <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1">
-                  <span>Threat Type: <strong className="text-slate-200">{demo.expected_threat_type.replace(/_/g, ' ')}</strong></span>
-                  <span>Expected Risk: <strong className={isSafe ? 'text-emerald-400' : 'text-red-400'}>{demo.expected_risk_score}/100</strong></span>
+                {/* Action Button */}
+                <div className="mt-4 pt-3 border-t border-[#E2E8E5]">
+                  <button
+                    type="button"
+                    onClick={() => handleRunDemo(demo)}
+                    disabled={isRunning}
+                    className="w-full py-2 rounded-lg text-xs font-sans font-semibold bg-[#F7F8F6] hover:bg-[#E2E8E5] active:scale-[0.99] text-[#172321] border border-[#E2E8E5] transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  >
+                    {isRunning ? (
+                      <span className="flex items-center gap-1.5 text-[#087F75]">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Executing Pipeline...
+                      </span>
+                    ) : (
+                      <>
+                        <span>Run Scenario Analysis</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
-
-              {/* Action Button */}
-              <div className="mt-6 pt-4 border-t border-slate-800">
-                <button
-                  onClick={() => handleRunDemo(demo)}
-                  disabled={isRunning}
-                  className={`w-full py-2.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                    isSafe
-                      ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
-                  }`}
-                >
-                  {isRunning ? (
-                    <span>Running Full AI Forensic Scan...</span>
-                  ) : (
-                    <>
-                      <span>Execute Live Analysis</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

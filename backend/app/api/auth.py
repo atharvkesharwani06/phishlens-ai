@@ -1,7 +1,7 @@
 """
 Mock / Demo Authentication Router
 ==================================
-College Minor Project - PhishLens AI
+PhishLens AI - Explainable Cybersecurity System
 
 NOTE & ARCHITECTURAL DISCLOSURE:
 This module provides simulated demonstration endpoints (/api/auth/login and /api/auth/register)

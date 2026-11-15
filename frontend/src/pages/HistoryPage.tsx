@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  History, 
   Trash2, 
   Eye, 
   RefreshCw, 
-  Search, 
-  Filter, 
-  AlertCircle, 
-  Calendar, 
-  CheckCircle2, 
-  RotateCcw 
+  Search
 } from 'lucide-react';
 import { AnalysisService } from '../services/api';
-import { AnalysisHistoryItem, ThreatClassification } from '../types';
+import { AnalysisHistoryItem } from '../types';
 import { ThreatBadge } from '../components/ThreatBadge';
 
 export const HistoryPage: React.FC = () => {
@@ -72,45 +66,48 @@ export const HistoryPage: React.FC = () => {
   });
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 space-y-8">
+    <div className="max-w-6xl mx-auto py-4 px-4 sm:px-6 space-y-6 font-sans animate-page-enter">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#E2E8E5]">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold text-white font-mono tracking-tight">
-              ANALYSIS AUDIT HISTORY
+            <h1 className="text-xl sm:text-2xl font-bold text-[#172321] tracking-tight font-sans">
+              Analysis Audit Log
             </h1>
-            <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-xs font-mono border border-cyan-500/30">
-              AUDIT TRAIL
+            <span className="px-2 py-0.5 rounded bg-[#E6F4F1] text-[#087F75] text-[11px] font-mono border border-[#087F75]/20 font-medium">
+              LOCAL DATABASE
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Browse and review past explainable threat reports and security verdicts.
+          <p className="text-xs text-[#697773] mt-1 font-sans">
+            Review past forensic evaluations, risk ratings, and extracted threat indicators.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={fetchHistory}
-            className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-cyan-400 text-xs font-mono flex items-center gap-1.5 transition-colors"
+            disabled={isLoading}
+            className="px-3 py-1.5 rounded-md bg-[#FFFFFF] hover:bg-[#F7F8F6] border border-[#E2E8E5] text-[#172321] text-xs font-sans font-medium flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer disabled:opacity-60"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-[#697773] ${isLoading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
 
           {history.length > 0 && (
             <button
+              type="button"
               onClick={handleClearAll}
-              className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-mono flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-md bg-[#C74747]/10 hover:bg-[#C74747]/20 border border-[#C74747]/30 text-[#C74747] text-xs font-sans font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Clear History</span>
+              <Trash2 className="w-3.5 h-3.5 text-[#C74747]" />
+              <span>Clear Log</span>
             </button>
           )}
 
           <Link
             to="/analyze"
-            className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-md shadow-cyan-500/20"
+            className="px-3.5 py-1.5 rounded-md bg-[#087F75] hover:bg-[#076c64] text-white text-xs font-sans font-medium flex items-center gap-1.5 transition-colors shadow-xs"
           >
             <Search className="w-3.5 h-3.5" />
             <span>New Scan</span>
@@ -119,29 +116,30 @@ export const HistoryPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-3 rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
         {/* Search */}
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-[#697773] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search keywords, threats, or summary..."
-            className="w-full rounded-lg bg-slate-950 border border-slate-800 pl-9 pr-4 py-2 text-xs font-mono text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-400"
+            placeholder="Filter by keyword, threat type, or preview..."
+            className="w-full rounded-md bg-[#F7F8F6] border border-[#E2E8E5] pl-8 pr-3 py-1.5 text-xs font-sans text-[#172321] placeholder-[#697773] focus:outline-none focus:border-[#087F75] focus:bg-[#FFFFFF] transition-colors"
           />
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
           {['ALL', 'PHISHING', 'SUSPICIOUS', 'SAFE', 'TEXT', 'URL', 'EMAIL', 'IMAGE'].map((filter) => (
             <button
+              type="button"
               key={filter}
               onClick={() => setFilterType(filter)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${
+              className={`px-2.5 py-1 rounded-md text-[11px] font-sans transition-colors cursor-pointer ${
                 filterType === filter
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200 bg-slate-950/60 border border-slate-800'
+                  ? 'bg-[#087F75] text-white font-medium shadow-xs'
+                  : 'text-[#697773] hover:text-[#172321] bg-[#F7F8F6] border border-[#E2E8E5] hover:bg-[#FFFFFF]'
               }`}
             >
               {filter}
@@ -151,57 +149,59 @@ export const HistoryPage: React.FC = () => {
       </div>
 
       {/* History Table */}
-      <div className="rounded-2xl bg-slate-900/80 border border-slate-800 overflow-hidden shadow-xl">
+      <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase tracking-wider">
+          <table className="w-full text-left text-xs font-sans">
+            <thead className="bg-[#F7F8F6] text-[#697773] border-b border-[#E2E8E5] font-semibold text-[11px]">
               <tr>
-                <th className="py-3.5 px-4">Date & Time</th>
-                <th className="py-3.5 px-4">Input Type</th>
-                <th className="py-3.5 px-4">Classification</th>
-                <th className="py-3.5 px-4">Threat Type</th>
-                <th className="py-3.5 px-4 text-center">Risk Score</th>
-                <th className="py-3.5 px-4">Summary Preview</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
+                <th className="py-2.5 px-4">Date &amp; Time</th>
+                <th className="py-2.5 px-4">Modality</th>
+                <th className="py-2.5 px-4">Classification</th>
+                <th className="py-2.5 px-4">Threat Type</th>
+                <th className="py-2.5 px-4 text-center">Risk Score</th>
+                <th className="py-2.5 px-4">Executive Rationale</th>
+                <th className="py-2.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
+            <tbody className="divide-y divide-[#E2E8E5] text-[#172321]">
               {filteredHistory.length > 0 ? (
                 filteredHistory.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3.5 px-4 text-slate-400 whitespace-nowrap">
+                  <tr key={item.id} className="hover:bg-[#F7F8F6]/80 transition-colors">
+                    <td className="py-3 px-4 text-[#697773] font-mono text-[11px] whitespace-nowrap">
                       {new Date(item.created_at).toLocaleString()}
                     </td>
-                    <td className="py-3.5 px-4 uppercase text-cyan-300 whitespace-nowrap font-bold">
+                    <td className="py-3 px-4 uppercase text-[#172321] font-mono text-[11px] whitespace-nowrap">
                       {item.input_type}
                     </td>
-                    <td className="py-3.5 px-4 whitespace-nowrap">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       <ThreatBadge classification={item.classification} size="sm" />
                     </td>
-                    <td className="py-3.5 px-4 text-slate-200 whitespace-nowrap">
+                    <td className="py-3 px-4 text-[#172321] font-medium whitespace-nowrap">
                       {item.threat_type.replace(/_/g, ' ')}
                     </td>
-                    <td className="py-3.5 px-4 text-center font-bold whitespace-nowrap">
-                      <span className={item.risk_score >= 60 ? 'text-red-400' : item.risk_score >= 30 ? 'text-amber-400' : 'text-emerald-400'}>
+                    <td className="py-3 px-4 text-center font-mono font-bold whitespace-nowrap">
+                      <span className={item.risk_score >= 60 ? 'text-[#C74747]' : item.risk_score >= 30 ? 'text-[#B77932]' : 'text-[#39805A]'}>
                         {item.risk_score}/100
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 max-w-xs truncate text-slate-400">
+                    <td className="py-3 px-4 max-w-xs truncate text-[#697773] text-xs">
                       {item.summary}
                     </td>
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="py-3 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
                         <Link
                           to={`/result/${item.id}`}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-colors font-semibold"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#F7F8F6] hover:bg-[#E6F4F1] hover:text-[#087F75] text-[#172321] border border-[#E2E8E5] transition-colors font-medium text-xs"
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <Eye className="w-3.5 h-3.5 text-[#697773]" />
                           <span>Report</span>
                         </Link>
                         <button
+                          type="button"
                           onClick={() => handleDelete(item.id)}
-                          className="p-1 rounded text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors"
-                          title="Delete"
+                          className="p-1 rounded text-[#697773] hover:text-[#C74747] hover:bg-[#C74747]/10 transition-colors cursor-pointer"
+                          title="Delete entry"
+                          aria-label="Delete entry"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -211,8 +211,8 @@ export const HistoryPage: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-500 italic">
-                    No threat logs match your filters. Run a scan from the Analyze Console to record entries.
+                  <td colSpan={7} className="py-12 text-center text-[#697773] italic text-xs font-sans">
+                    No threat logs match the selected filter criteria.
                   </td>
                 </tr>
               )}

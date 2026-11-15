@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { 
-  Shield, 
   AlertOctagon, 
-  CheckCircle2, 
-  Share2, 
-  Download, 
   RotateCcw, 
-  Sparkles, 
   FileText, 
   Globe, 
   Cpu, 
-  Info, 
   ChevronLeft, 
   Printer, 
   Eye, 
-  Activity 
+  Activity,
+  CheckCircle2,
+  FileSearch
 } from 'lucide-react';
 import { AnalysisService } from '../services/api';
 import { AnalysisResult } from '../types';
@@ -28,7 +24,6 @@ import { DosAndDontsCard } from '../components/DosAndDontsCard';
 
 export const ResultPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,25 +50,25 @@ export const ResultPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="py-24 text-center">
-        <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mx-auto animate-spin mb-4">
-          <Activity className="w-6 h-6" />
+      <div className="py-20 text-center font-sans">
+        <div className="w-10 h-10 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mx-auto animate-spin mb-3">
+          <Activity className="w-5 h-5" />
         </div>
-        <h3 className="text-base font-mono font-bold text-white">Loading Threat Report...</h3>
-        <p className="text-xs font-mono text-slate-400 mt-1">Retrieving forensic indicators & neural scoring...</p>
+        <h3 className="text-sm font-semibold text-[#172321] font-sans">Loading Threat Report...</h3>
+        <p className="text-xs text-[#697773] font-sans mt-0.5">Retrieving forensic indicators and risk telemetry...</p>
       </div>
     );
   }
 
   if (error || !result) {
     return (
-      <div className="max-w-xl mx-auto py-16 px-4 text-center">
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-mono mb-6">
+      <div className="max-w-xl mx-auto py-16 px-4 text-center font-sans">
+        <div className="p-4 rounded-lg bg-[#C74747]/8 border border-[#C74747]/25 text-[#C74747] text-xs font-sans mb-4">
           {error || 'Threat report not found.'}
         </div>
         <Link
           to="/analyze"
-          className="px-6 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs font-bold transition-all"
+          className="px-5 py-2 rounded-lg bg-[#087F75] hover:bg-[#076c64] text-white font-sans text-xs font-semibold transition-colors shadow-xs"
         >
           &larr; Return to Analyze Console
         </Link>
@@ -82,99 +77,99 @@ export const ResultPage: React.FC = () => {
   }
 
   const isPhishing = result.classification === 'PHISHING';
-  const isSuspicious = result.classification === 'SUSPICIOUS';
 
   return (
-    <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-8">
-      {/* Top Breadcrumb / Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <div className="max-w-5xl mx-auto py-4 px-4 sm:px-6 space-y-6 font-sans animate-page-enter">
+      {/* Top Action Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E2E8E5]">
         <Link
           to="/analyze"
-          className="inline-flex items-center gap-1 text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors"
+          className="inline-flex items-center gap-1 text-xs font-sans text-[#697773] hover:text-[#087F75] font-medium transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>Back to Scanner</span>
+          <span>Back to Analysis Console</span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => window.print()}
-            className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 rounded-md bg-[#FFFFFF] hover:bg-[#F7F8F6] active:scale-[0.98] border border-[#E2E8E5] text-[#172321] text-xs font-sans flex items-center gap-1.5 transition-all duration-150 shadow-xs cursor-pointer"
           >
-            <Printer className="w-3.5 h-3.5" />
+            <Printer className="w-3.5 h-3.5 text-[#697773]" />
             <span>Print Report</span>
           </button>
 
           <Link
             to="/analyze"
-            className="px-3.5 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-mono font-semibold flex items-center gap-1.5 transition-all"
+            className="px-3.5 py-1.5 rounded-md bg-[#087F75] hover:bg-[#076c64] active:scale-[0.98] text-white text-xs font-sans font-semibold flex items-center gap-1.5 transition-all duration-150 shadow-xs"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Scan Another</span>
+            <span>New Analysis</span>
           </Link>
         </div>
       </div>
 
       {/* Hero Threat Assessment Header */}
-      <div className="rounded-2xl bg-[#0B1120] border border-slate-800 shadow-2xl overflow-hidden">
-        <div className="p-6 sm:p-8 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 flex flex-col lg:flex-row items-center justify-between gap-8 border-b border-slate-800">
+      <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs overflow-hidden">
+        <div className="p-6 sm:p-7 flex flex-col lg:flex-row items-center justify-between gap-6 border-b border-[#E2E8E5]">
           {/* Left Column: Classification & Executive Summary */}
-          <div className="space-y-4 flex-1">
-            <div className="flex items-center gap-3 flex-wrap">
+          <div className="space-y-3.5 flex-1">
+            <div className="flex items-center gap-2.5 flex-wrap">
               <ThreatBadge classification={result.classification} size="lg" />
               <ThreatBadge severity={result.risk_level} size="lg" />
-              <span className="text-xs font-mono text-slate-400 uppercase bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
-                Type: {result.input_type}
+              <span className="text-xs font-mono text-[#697773] bg-[#F7F8F6] px-2.5 py-0.5 rounded border border-[#E2E8E5]">
+                Modality: {result.input_type}
               </span>
             </div>
 
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-mono tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#172321] font-sans tracking-tight">
                 {result.threat_type.replace(/_/g, ' ')}
               </h1>
-              <p className="text-xs text-slate-400 font-mono mt-1">
-                Forensic Case Reference: <span className="text-cyan-400">{result.id.slice(0, 13)}...</span> • Logged on {new Date(result.created_at).toLocaleString()}
+              <p className="text-xs text-[#697773] font-mono mt-0.5">
+                Case Reference: <span className="text-[#172321] font-semibold">{result.id.slice(0, 13)}</span> • Recorded on {new Date(result.created_at).toLocaleString()}
               </p>
             </div>
 
-            {/* AI Natural Explanation Summary */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-cyan-500/20 text-sm text-slate-200 leading-relaxed font-sans">
-              <div className="flex items-center gap-2 mb-1.5 text-xs font-mono text-cyan-400 font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>EXPLAINABLE THREAT SUMMARY:</span>
+            {/* Natural Explanation Summary */}
+            <div className="p-4 rounded-lg bg-[#E6F4F1]/60 border border-[#087F75]/20 text-xs text-[#172321] leading-relaxed font-sans">
+              <div className="flex items-center gap-1.5 mb-1 text-xs font-sans text-[#087F75] font-semibold">
+                <FileSearch className="w-3.5 h-3.5 text-[#087F75]" />
+                <span>Executive Threat Explanation:</span>
               </div>
               <p>{result.summary}</p>
             </div>
           </div>
 
-          {/* Right Column: Circular Risk Speedometer Gauge */}
-          <div className="shrink-0 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+          {/* Right Column: Risk Gauge */}
+          <div className="shrink-0 bg-[#F7F8F6] p-3 rounded-xl border border-[#E2E8E5]">
             <RiskGauge
               score={result.risk_score}
               riskLevel={result.risk_level}
               confidence={result.confidence}
-              size={180}
+              size={170}
             />
           </div>
         </div>
 
-        {/* Score Breakdown Bar (Transparency in AI) */}
+        {/* Score Breakdown Bar */}
         {result.score_breakdown && (
-          <div className="px-6 py-3 bg-slate-950/90 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-400">
-            <span className="text-slate-500">SCORING COMPONENT WEIGHTS:</span>
-            <div className="flex items-center gap-6">
-              <span>NLP Machine Learning: <strong className="text-cyan-400">{result.score_breakdown.ai_score}%</strong></span>
-              <span>Security Rule Weight: <strong className="text-amber-400">{result.score_breakdown.rule_score}%</strong></span>
-              <span>URL / Context Risk: <strong className="text-red-400">{result.score_breakdown.url_score}%</strong></span>
+          <div className="px-6 py-2.5 bg-[#F7F8F6] border-t border-[#E2E8E5] flex flex-wrap items-center justify-between gap-4 text-xs font-sans text-[#697773]">
+            <span className="text-[#697773] font-medium">Scoring Weights:</span>
+            <div className="flex items-center gap-5 text-xs font-sans">
+              <span>Linguistic NLP: <strong className="font-mono text-[#172321]">{result.score_breakdown.ai_score}%</strong></span>
+              <span>Heuristic Rules: <strong className="font-mono text-[#172321]">{result.score_breakdown.rule_score}%</strong></span>
+              <span>Static URL: <strong className="font-mono text-[#172321]">{result.score_breakdown.url_score}%</strong></span>
             </div>
           </div>
         )}
       </div>
 
       {/* Interactive Evidence Highlighting on Message */}
-      <section className="space-y-3">
-        <h3 className="text-sm font-bold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
-          <Eye className="w-4 h-4 text-cyan-400" />
+      <section className="space-y-2.5">
+        <h3 className="text-xs font-bold font-sans text-[#172321] uppercase tracking-wider flex items-center gap-1.5">
+          <Eye className="w-3.5 h-3.5 text-[#087F75]" />
           <span>Interactive Evidence Inspector</span>
         </h3>
         <InteractiveEvidenceViewer
@@ -183,37 +178,37 @@ export const ResultPage: React.FC = () => {
         />
       </section>
 
-      {/* WHY PHISHLENS FLAGGED THIS (Indicator Cards) */}
-      <section className="space-y-3">
+      {/* Detected Indicators */}
+      <section className="space-y-2.5">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
-            <AlertOctagon className="w-4 h-4 text-cyan-400" />
-            <span>Why PhishLens Flagged This ({result.indicators.length} Indicators)</span>
+          <h3 className="text-xs font-bold font-sans text-[#172321] uppercase tracking-wider flex items-center gap-1.5">
+            <AlertOctagon className="w-3.5 h-3.5 text-[#087F75]" />
+            <span>Detected Forensic Indicators ({result.indicators.length})</span>
           </h3>
-          <span className="text-xs font-mono text-slate-500">
-            Linguistic, Behavioral & Heuristic Telemetry
+          <span className="text-xs font-sans text-[#697773]">
+            Linguistic and Behavioral Evidence
           </span>
         </div>
 
         {result.indicators.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             {result.indicators.map((indicator, idx) => (
               <IndicatorCard key={idx} indicator={indicator} />
             ))}
           </div>
         ) : (
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>No malicious threat indicators or deceptive triggers were found in this content.</span>
+          <div className="p-4 rounded-lg bg-[#39805A]/8 border border-[#39805A]/25 text-[#39805A] text-xs font-sans flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#39805A]" />
+            <span>No malicious deception indicators or manipulative tokens identified in this input.</span>
           </div>
         )}
       </section>
 
       {/* Static URL Forensic Analysis */}
       {result.url_details && (
-        <section className="space-y-3">
-          <h3 className="text-sm font-bold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
-            <Globe className="w-4 h-4 text-cyan-400" />
+        <section className="space-y-2.5">
+          <h3 className="text-xs font-bold font-sans text-[#172321] uppercase tracking-wider flex items-center gap-1.5">
+            <Globe className="w-3.5 h-3.5 text-[#087F75]" />
             <span>Static URL Security Analysis</span>
           </h3>
           <UrlAnalysisCard urlDetails={result.url_details} />
@@ -222,62 +217,63 @@ export const ResultPage: React.FC = () => {
 
       {/* Extracted OCR Information (if image upload) */}
       {result.ocr_details && (
-        <section className="space-y-3">
-          <h3 className="text-sm font-bold font-mono text-slate-200 uppercase tracking-wider flex items-center gap-2">
-            <FileText className="w-4 h-4 text-cyan-400" />
-            <span>OCR Extraction Findings</span>
+        <section className="space-y-2.5">
+          <h3 className="text-xs font-bold font-sans text-[#172321] uppercase tracking-wider flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5 text-[#087F75]" />
+            <span>Optical Character Recognition (OCR) Telemetry</span>
           </h3>
 
-          <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-5 space-y-3">
+          <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 space-y-3 shadow-xs">
             <div>
-              <span className="text-xs font-mono text-slate-400 uppercase block mb-1">
-                Extracted Text from Screenshot
+              <span className="text-[11px] font-sans font-medium text-[#697773] uppercase block mb-1">
+                Extracted Text from Image Payload
               </span>
-              <div className="p-3 rounded-lg bg-slate-950 font-mono text-xs text-slate-200 border border-slate-800">
-                {result.ocr_details.extracted_text}
+              <div className="p-3 rounded-md bg-[#F7F8F6] font-mono text-xs text-[#172321] border border-[#E2E8E5] leading-relaxed">
+                {result.ocr_details.extracted_text || 'No textual content recognized.'}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-              <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-500 block">Detected URLs:</span>
-                <span className="text-cyan-300 font-bold">{result.ocr_details.detected_urls.length}</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-sans">
+              <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5]">
+                <span className="text-[#697773] block text-[11px]">Detected URLs:</span>
+                <span className="text-[#172321] font-mono font-bold">{result.ocr_details.detected_urls.length}</span>
               </div>
-              <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-500 block">Detected Brands:</span>
-                <span className="text-cyan-300 font-bold">{result.ocr_details.detected_brands.join(', ') || 'None'}</span>
+              <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5]">
+                <span className="text-[#697773] block text-[11px]">Detected Brands:</span>
+                <span className="text-[#172321] font-sans font-semibold">{result.ocr_details.detected_brands.join(', ') || 'None'}</span>
               </div>
-              <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-500 block">Phone Numbers:</span>
-                <span className="text-cyan-300 font-bold">{result.ocr_details.detected_phones.length}</span>
+              <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5]">
+                <span className="text-[#697773] block text-[11px]">Phone Numbers:</span>
+                <span className="text-[#172321] font-mono font-bold">{result.ocr_details.detected_phones.length}</span>
               </div>
-              <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
-                <span className="text-slate-500 block">Email Addresses:</span>
-                <span className="text-cyan-300 font-bold">{result.ocr_details.detected_emails.length}</span>
+              <div className="p-2.5 rounded-md bg-[#F7F8F6] border border-[#E2E8E5]">
+                <span className="text-[#697773] block text-[11px]">Email Addresses:</span>
+                <span className="text-[#172321] font-mono font-bold">{result.ocr_details.detected_emails.length}</span>
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* Recommended Non-Technical Actions (DOs and DO NOTs) */}
-      <section className="space-y-3">
+      {/* Recommended Non-Technical Actions */}
+      <section className="space-y-2.5">
         <DosAndDontsCard dosAndDonts={result.dos_and_donts} isPhishing={isPhishing} />
       </section>
 
-      {/* Technical Forensic Breakdown (Toggleable for Academic Reviewers / Analysts) */}
+      {/* Technical Forensic Breakdown (Toggleable) */}
       <section className="pt-2">
         <button
+          type="button"
           onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
-          className="text-xs font-mono text-slate-400 hover:text-cyan-300 flex items-center gap-1.5 transition-colors"
+          className="text-xs font-sans font-medium text-[#697773] hover:text-[#087F75] flex items-center gap-1.5 transition-colors cursor-pointer"
         >
-          <Cpu className="w-3.5 h-3.5" />
-          <span>{showTechnicalDetails ? 'Hide' : 'Show'} Technical JSON Metadata & Parameters</span>
+          <Cpu className="w-3.5 h-3.5 text-[#697773]" />
+          <span>{showTechnicalDetails ? 'Hide' : 'Show'} Raw JSON Telemetry &amp; Parameters</span>
         </button>
 
         {showTechnicalDetails && (
-          <div className="mt-3 p-4 rounded-xl bg-slate-950 border border-slate-800 overflow-x-auto">
-            <pre className="text-[11px] font-mono text-cyan-300">
+          <div className="mt-2.5 p-4 rounded-xl bg-[#F7F8F6] border border-[#E2E8E5] overflow-x-auto shadow-xs animate-fade-in">
+            <pre className="text-[11px] font-mono text-[#172321] leading-snug">
               {JSON.stringify(
                 {
                   id: result.id,

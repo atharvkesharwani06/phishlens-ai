@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Shield, 
   AlertOctagon, 
   AlertTriangle, 
   CheckCircle2, 
   Activity, 
-  ArrowUpRight, 
   Search, 
   RefreshCw, 
-  Eye, 
-  Calendar, 
-  FileText 
+  Eye
 } from 'lucide-react';
 import { 
   PieChart, 
@@ -27,6 +23,49 @@ import {
 import { AnalysisService } from '../services/api';
 import { DashboardStats } from '../types';
 import { ThreatBadge } from '../components/ThreatBadge';
+
+const AnimatedStatNumber: React.FC<{ value: number }> = ({ value }) => {
+  const [displayVal, setDisplayVal] = useState<number>(value);
+  const prevValRef = useRef<number>(value);
+
+  useEffect(() => {
+    const prefersReducedMotion = typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const startVal = prevValRef.current;
+    const targetVal = value;
+
+    if (prefersReducedMotion || startVal === targetVal) {
+      setDisplayVal(targetVal);
+      prevValRef.current = targetVal;
+      return;
+    }
+
+    const duration = 500;
+    const startTime = performance.now();
+    let frameId: number;
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setDisplayVal(Math.round(startVal + (targetVal - startVal) * ease));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(tick);
+      } else {
+        prevValRef.current = targetVal;
+      }
+    };
+
+    frameId = requestAnimationFrame(tick);
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, [value]);
+
+  return <span className="tabular-nums">{displayVal}</span>;
+};
 
 export const DashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -48,7 +87,6 @@ export const DashboardPage: React.FC = () => {
     fetchStats();
   }, []);
 
-  // Format chart data
   const threatPieData = stats?.threat_distribution
     ? Object.entries(stats.threat_distribution).map(([key, val]) => ({
         name: key.replace(/_/g, ' '),
@@ -74,127 +112,128 @@ export const DashboardPage: React.FC = () => {
         { level: 'LOW', count: 48 },
       ];
 
-  const PIE_COLORS = ['#EF4444', '#F97316', '#FBBF24', '#06B6D4', '#10B981'];
+  const PIE_COLORS = ['#C74747', '#B77932', '#087F75', '#39805A', '#697773'];
 
   return (
-    <div className="space-y-8 py-6">
+    <div className="space-y-6 py-4 font-sans animate-page-enter">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#E2E8E5]">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold text-white font-mono tracking-tight">
-              CYBER DEFENSE DASHBOARD
+            <h1 className="text-xl sm:text-2xl font-bold text-[#172321] tracking-tight">
+              Threat Telemetry Dashboard
             </h1>
-            <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-xs font-mono border border-cyan-500/30">
-              LIVE TELEMETRY
+            <span className="px-2 py-0.5 rounded bg-[#E6F4F1] text-[#087F75] text-[11px] font-mono border border-[#087F75]/20 font-semibold">
+              DATABASE METRICS
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Real-time threat landscape, statistical distributions, and recent forensic telemetry.
+          <p className="text-xs text-[#697773] mt-0.5">
+            Statistical aggregation of threat classifications, risk scores, and forensic scans.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={fetchStats}
-            className="px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-cyan-400 text-xs font-mono flex items-center gap-1.5 transition-colors"
+            disabled={isLoading}
+            className="px-3 py-1.5 rounded-md bg-[#FFFFFF] hover:bg-[#F7F8F6] active:scale-[0.98] border border-[#E2E8E5] text-[#172321] text-xs font-sans font-medium flex items-center gap-1.5 transition-all duration-150 shadow-xs cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-[#697773] ${isLoading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
 
           <Link
             to="/analyze"
-            className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-md shadow-cyan-500/20"
+            className="px-3.5 py-1.5 rounded-md bg-[#087F75] hover:bg-[#076c64] active:scale-[0.98] text-white text-xs font-sans font-semibold flex items-center gap-1.5 transition-all duration-150 shadow-xs"
           >
             <Search className="w-3.5 h-3.5" />
-            <span>New Scan</span>
+            <span>New Analysis</span>
           </Link>
         </div>
       </div>
 
-      {/* 4 Core Summary Counters */}
+      {/* Metric Cards Top Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Analyses */}
-        <div className="rounded-xl bg-slate-900/80 border border-slate-800 p-5 shadow-lg">
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-4 shadow-xs hover:border-[#087F75]/40 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-slate-400 uppercase">Total Analyses</span>
-            <div className="p-2 rounded-lg bg-slate-800 text-cyan-400">
+            <span className="text-xs font-sans font-medium text-[#697773]">Total Scanned Artifacts</span>
+            <div className="p-1.5 rounded-md bg-[#F7F8F6] text-[#172321] border border-[#E2E8E5]">
               <Activity className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono text-white">
-              {stats?.total_analyses ?? 142}
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold font-mono text-[#172321]">
+              <AnimatedStatNumber value={stats?.total_analyses ?? 142} />
             </span>
-            <span className="text-[11px] text-slate-400 font-mono">scans performed</span>
+            <span className="text-[11px] text-[#697773] font-sans">completed runs</span>
           </div>
         </div>
 
         {/* Phishing Detected */}
-        <div className="rounded-xl bg-slate-900/80 border border-red-500/20 p-5 shadow-lg">
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#C74747]/25 p-4 shadow-xs hover:border-[#C74747]/50 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-red-400 uppercase">Phishing Detected</span>
-            <div className="p-2 rounded-lg bg-red-500/10 text-red-400">
+            <span className="text-xs font-sans font-medium text-[#C74747]">Phishing Confirmed</span>
+            <div className="p-1.5 rounded-md bg-[#C74747]/8 text-[#C74747]">
               <AlertOctagon className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono text-red-400">
-              {stats?.phishing_count ?? 58}
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold font-mono text-[#C74747]">
+              <AnimatedStatNumber value={stats?.phishing_count ?? 58} />
             </span>
-            <span className="text-[11px] text-red-400/70 font-mono">critical threats</span>
+            <span className="text-[11px] text-[#C74747] font-sans">high / critical threats</span>
           </div>
         </div>
 
         {/* Suspicious */}
-        <div className="rounded-xl bg-slate-900/80 border border-amber-500/20 p-5 shadow-lg">
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#B77932]/25 p-4 shadow-xs hover:border-[#B77932]/50 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-amber-400 uppercase">Suspicious Flagged</span>
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+            <span className="text-xs font-sans font-medium text-[#B77932]">Suspicious Warnings</span>
+            <div className="p-1.5 rounded-md bg-[#B77932]/8 text-[#B77932]">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono text-amber-400">
-              {stats?.suspicious_count ?? 36}
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold font-mono text-[#B77932]">
+              <AnimatedStatNumber value={stats?.suspicious_count ?? 36} />
             </span>
-            <span className="text-[11px] text-amber-400/70 font-mono">warnings issued</span>
+            <span className="text-[11px] text-[#B77932] font-sans">anomalies flagged</span>
           </div>
         </div>
 
         {/* Safe */}
-        <div className="rounded-xl bg-slate-900/80 border border-emerald-500/20 p-5 shadow-lg">
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#39805A]/25 p-4 shadow-xs hover:border-[#39805A]/50 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-emerald-400 uppercase">Verified Safe</span>
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+            <span className="text-xs font-sans font-medium text-[#39805A]">Benign / Safe</span>
+            <div className="p-1.5 rounded-md bg-[#39805A]/8 text-[#39805A]">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold font-mono text-emerald-400">
-              {stats?.safe_count ?? 48}
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold font-mono text-[#39805A]">
+              <AnimatedStatNumber value={stats?.safe_count ?? 48} />
             </span>
-            <span className="text-[11px] text-emerald-400/70 font-mono">benign items</span>
+            <span className="text-[11px] text-[#39805A] font-sans">verified low-risk</span>
           </div>
         </div>
       </div>
 
       {/* Analytics Visualizations */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Threat Type Donut Chart */}
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-5 shadow-lg">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 shadow-xs">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E2E8E5]">
             <div>
-              <h3 className="text-sm font-bold font-mono text-slate-100">
-                THREAT TYPE DISTRIBUTION
+              <h3 className="text-xs font-bold font-sans text-[#172321] uppercase tracking-wider">
+                Threat Classification Ratio
               </h3>
-              <p className="text-[11px] text-slate-400">Classification breakdown across scanned threats</p>
+              <p className="text-[11px] text-[#697773] font-sans">Breakdown across confirmed deceptive attack categories</p>
             </div>
-            <span className="text-xs font-mono text-cyan-400">Distribution %</span>
           </div>
 
-          <div className="h-64 w-full">
+          <div className="h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -203,139 +242,147 @@ export const DashboardPage: React.FC = () => {
                   cy="50%"
                   innerRadius={55}
                   outerRadius={85}
-                  paddingAngle={4}
+                  paddingAngle={3}
                   dataKey="value"
+                  isAnimationActive={true}
+                  animationDuration={600}
+                  animationEasing="ease-out"
                 >
-                  {threatPieData.map((entry, index) => (
+                  {threatPieData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                   ))}
                 </Pie>
                 <RechartsTooltip
                   contentStyle={{
-                    backgroundColor: '#0D1424',
-                    borderColor: '#1E293B',
+                    backgroundColor: '#FFFFFF',
+                    borderColor: '#E2E8E5',
                     borderRadius: '8px',
-                    fontFamily: 'monospace',
                     fontSize: '12px',
-                    color: '#FFF',
+                    color: '#172321',
+                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-slate-400 pt-2 border-t border-slate-800/60">
+          <div className="flex flex-wrap items-center justify-center gap-3.5 text-xs font-sans text-[#697773] pt-3 border-t border-[#E2E8E5]">
             {threatPieData.map((item, idx) => (
               <div key={idx} className="flex items-center gap-1.5">
                 <span
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: PIE_COLORS[idx % PIE_COLORS.length] }}
                 ></span>
-                <span>{item.name}: {item.value}</span>
+                <span className="text-[11px]">{item.name}: <strong className="font-mono text-[#172321]">{item.value}</strong></span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Risk Level Bar Chart */}
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-5 shadow-lg">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+        <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] p-5 shadow-xs">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E2E8E5]">
             <div>
-              <h3 className="text-sm font-bold font-mono text-slate-100">
-                RISK SEVERITY CONCENTRATION
+              <h3 className="text-xs font-bold font-sans text-[#172321] uppercase tracking-wider">
+                Risk Tier Distribution
               </h3>
-              <p className="text-[11px] text-slate-400">Total detected samples by severity tier</p>
+              <p className="text-[11px] text-[#697773] font-sans">Number of scanned samples per risk severity band</p>
             </div>
-            <span className="text-xs font-mono text-slate-400">0 - 100 Score</span>
+            <span className="text-[11px] font-mono text-[#697773]">Scale: 0–100</span>
           </div>
 
-          <div className="h-64 w-full">
+          <div className="h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={riskBarData}>
-                <XAxis dataKey="level" stroke="#64748B" fontSize={11} fontFamily="monospace" />
-                <YAxis stroke="#64748B" fontSize={11} />
+                <XAxis dataKey="level" stroke="#697773" fontSize={11} fontFamily="sans-serif" />
+                <YAxis stroke="#697773" fontSize={11} fontFamily="sans-serif" />
                 <RechartsTooltip
                   contentStyle={{
-                    backgroundColor: '#0D1424',
-                    borderColor: '#1E293B',
+                    backgroundColor: '#FFFFFF',
+                    borderColor: '#E2E8E5',
                     borderRadius: '8px',
-                    fontFamily: 'monospace',
                     fontSize: '12px',
-                    color: '#FFF',
+                    color: '#172321',
+                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
                   }}
                 />
-                <Bar dataKey="count" fill="#06B6D4" radius={[6, 6, 0, 0]} />
+                <Bar 
+                  dataKey="count" 
+                  fill="#087F75" 
+                  radius={[4, 4, 0, 0]} 
+                  isAnimationActive={true}
+                  animationDuration={600}
+                  animationEasing="ease-out"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="grid grid-cols-4 gap-2 text-center text-[11px] font-mono pt-3 border-t border-slate-800/60">
-            <div className="text-red-400 font-bold">CRITICAL (80+)</div>
-            <div className="text-orange-400 font-bold">HIGH (60-79)</div>
-            <div className="text-amber-400 font-bold">MED (30-59)</div>
-            <div className="text-emerald-400 font-bold">LOW (0-29)</div>
+          <div className="flex items-center justify-between text-xs font-sans text-[#697773] pt-3 border-t border-[#E2E8E5]">
+            <span>Low Risk: 0–29</span>
+            <span>Medium: 30–59</span>
+            <span>High: 60–79</span>
+            <span>Critical: 80–100</span>
           </div>
         </div>
       </div>
 
-      {/* Recent Scans Table */}
-      <div className="rounded-2xl bg-slate-900/80 border border-slate-800 overflow-hidden shadow-lg">
-        <div className="px-5 py-4 bg-slate-800/60 border-b border-slate-800 flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold font-mono text-slate-100">
-              RECENT FORENSIC ANALYSES
+      {/* Recent Activity Table */}
+      <div className="rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] overflow-hidden shadow-xs">
+        <div className="p-4 bg-[#F7F8F6] border-b border-[#E2E8E5] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-[#087F75]" />
+            <h3 className="text-xs font-bold font-sans text-[#172321] uppercase tracking-wider">
+              Recent Forensic Scans
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">Latest threat assessments logged by PhishLens AI</p>
           </div>
-
           <Link
             to="/history"
-            className="text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+            className="text-xs font-sans text-[#087F75] hover:text-[#076c64] font-medium transition-colors"
           >
-            <span>Full History</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            View Complete Audit Log &rarr;
           </Link>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase tracking-wider">
+          <table className="w-full text-left text-xs font-sans">
+            <thead className="bg-[#FFFFFF] text-[#697773] border-b border-[#E2E8E5] font-semibold text-[11px]">
               <tr>
-                <th className="py-3 px-4">Date / Time</th>
-                <th className="py-3 px-4">Input Type</th>
-                <th className="py-3 px-4">Classification</th>
-                <th className="py-3 px-4">Threat Category</th>
-                <th className="py-3 px-4 text-center">Risk Score</th>
-                <th className="py-3 px-4 text-right">Action</th>
+                <th className="py-2.5 px-4">Date &amp; Time</th>
+                <th className="py-2.5 px-4">Modality</th>
+                <th className="py-2.5 px-4">Threat Class</th>
+                <th className="py-2.5 px-4 text-center">Score</th>
+                <th className="py-2.5 px-4">Summary</th>
+                <th className="py-2.5 px-4 text-right">Inspection</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-slate-300">
+            <tbody className="divide-y divide-[#E2E8E5] text-[#172321]">
               {stats?.recent_analyses && stats.recent_analyses.length > 0 ? (
                 stats.recent_analyses.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3 px-4 text-slate-400">
-                      {new Date(item.created_at).toLocaleDateString()}
+                  <tr key={item.id} className="hover:bg-[#F7F8F6]/80 transition-colors">
+                    <td className="py-3 px-4 text-[#697773] font-mono text-[11px] whitespace-nowrap">
+                      {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="py-3 px-4 uppercase text-cyan-300">
+                    <td className="py-3 px-4 uppercase text-[#172321] font-mono text-[11px]">
                       {item.input_type}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       <ThreatBadge classification={item.classification} size="sm" />
                     </td>
-                    <td className="py-3 px-4 text-slate-200">
-                      {item.threat_type.replace(/_/g, ' ')}
-                    </td>
-                    <td className="py-3 px-4 text-center font-bold">
-                      <span className={item.risk_score >= 60 ? 'text-red-400' : item.risk_score >= 30 ? 'text-amber-400' : 'text-emerald-400'}>
-                        {item.risk_score}/100
+                    <td className="py-3 px-4 text-center font-mono font-bold">
+                      <span className={item.risk_score >= 60 ? 'text-[#C74747]' : item.risk_score >= 30 ? 'text-[#B77932]' : 'text-[#39805A]'}>
+                        {item.risk_score}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3 px-4 max-w-xs truncate text-[#697773] text-xs">
+                      {item.summary}
+                    </td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">
                       <Link
                         to={`/result/${item.id}`}
-                        className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 font-semibold"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#F7F8F6] hover:bg-[#E6F4F1] hover:text-[#087F75] text-[#172321] border border-[#E2E8E5] transition-colors font-medium text-xs"
                       >
-                        <Eye className="w-3.5 h-3.5" />
+                        <Eye className="w-3.5 h-3.5 text-[#697773]" />
                         <span>Inspect</span>
                       </Link>
                     </td>
@@ -343,8 +390,8 @@ export const DashboardPage: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-slate-500 italic">
-                    No custom analyses run yet. Click "New Scan" or try a demo scenario to generate live data!
+                  <td colSpan={6} className="py-8 text-center text-[#697773] italic text-xs font-sans">
+                    No recent forensic scan records found. Run an analysis or explore demo scenarios.
                   </td>
                 </tr>
               )}

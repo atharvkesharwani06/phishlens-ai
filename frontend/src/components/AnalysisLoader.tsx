@@ -1,94 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import { Shield, CheckCircle2, Loader2, Sparkles, Cpu, Search, FileText } from 'lucide-react';
+import React from 'react';
+import { Shield, Loader2, Search, Cpu, CheckCheck, FileText } from 'lucide-react';
 
 interface AnalysisLoaderProps {
-  onComplete?: () => void;
   inputType?: string;
 }
 
 export const AnalysisLoader: React.FC<AnalysisLoaderProps> = ({ inputType = 'content' }) => {
-  const [currentStep, setCurrentStep] = useState(1);
-
-  const steps = [
-    { id: 1, title: 'Input Received & Sanitized', icon: FileText, desc: 'Verifying encoding and parsing structures safely.' },
-    { id: 2, title: 'Extracting Content & Indicators', icon: Search, desc: 'Isolating URLs, brand keywords, psychological triggers, and entity vectors.' },
-    { id: 3, title: 'Analyzing Threat Patterns & URLs', icon: Shield, desc: 'Performing static URL entropy, domain validation, and spoofing checks.' },
-    { id: 4, title: 'Running NLP AI Assessment', icon: Cpu, desc: 'Executing probabilistic TF-IDF and Bayesian linguistic threat classification.' },
-    { id: 5, title: 'Generating Explainable Report', icon: Sparkles, desc: 'Assembling non-technical rationale, evidence highlighting, and defensive actions.' },
+  const pipelineStages = [
+    { id: 1, title: 'Input Sanitization', icon: FileText, desc: 'Normalizing UTF-8 encoding and safely isolating payload in memory.' },
+    { id: 2, title: 'Entity & Linguistic Parsing', icon: Search, desc: 'Detecting urgency tokens, social engineering phrases, and target entities.' },
+    { id: 3, title: 'Static Forensic Inspection', icon: Shield, desc: 'Evaluating Shannon domain entropy, high-risk TLDs, and heuristic indicators.' },
+    { id: 4, title: 'Multi-Factor Risk Scoring', icon: Cpu, desc: 'Applying deterministic 50/30/20 weights across language and security rules.' },
+    { id: 5, title: 'Defensive Protocol Assembly', icon: CheckCheck, desc: 'Synthesizing actionable DOs and DO NOTs with interactive highlighted evidence.' },
   ];
 
-  useEffect(() => {
-    const timer1 = setTimeout(() => setCurrentStep(2), 600);
-    const timer2 = setTimeout(() => setCurrentStep(3), 1300);
-    const timer3 = setTimeout(() => setCurrentStep(4), 2100);
-    const timer4 = setTimeout(() => setCurrentStep(5), 2800);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearTimeout(timer4);
-    };
-  }, []);
+  const formatModality = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'url': return 'target link URL';
+      case 'email': return 'email message & headers';
+      case 'screenshot':
+      case 'image': return 'screenshot OCR artifact';
+      default: return 'text message';
+    }
+  };
 
   return (
-    <div className="max-w-xl mx-auto p-8 rounded-2xl bg-slate-900/90 border border-cyan-500/30 shadow-2xl backdrop-blur-md">
-      {/* Radar scanning animation */}
-      <div className="flex flex-col items-center justify-center mb-8">
-        <div className="relative w-20 h-20 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border border-cyan-500/30 animate-ping"></div>
-          <div className="absolute inset-2 rounded-full border border-cyan-500/60 animate-pulse"></div>
-          <div className="relative w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-blue-600/20 border border-cyan-400 flex items-center justify-center">
-            <Shield className="w-6 h-6 text-cyan-400 animate-pulse" />
-          </div>
+    <div className="max-w-xl mx-auto p-6 sm:p-8 rounded-xl bg-[#FFFFFF] border border-[#E2E8E5] shadow-xs animate-fade-in font-sans">
+      {/* Header with active pulse and spinner */}
+      <div className="flex flex-col items-center justify-center mb-6 text-center">
+        <div className="relative w-12 h-12 rounded-lg bg-[#E6F4F1] border border-[#087F75]/20 flex items-center justify-center text-[#087F75] mb-3">
+          <Loader2 className="w-6 h-6 animate-spin text-[#087F75]" />
         </div>
 
-        <h3 className="mt-4 font-mono font-bold text-lg text-white tracking-wide">
-          DEEP FORENSIC SCAN IN PROGRESS
+        <h3 className="font-sans font-bold text-base text-[#172321] tracking-tight">
+          Active Security Analysis in Progress
         </h3>
-        <p className="text-xs text-cyan-400/80 font-mono mt-1">
-          Analyzing {inputType} for deception & malicious vectors...
+        <p className="text-xs text-[#697773] font-sans mt-1">
+          Evaluating {formatModality(inputType)} across deterministic cybersecurity heuristics.
         </p>
+
+        {/* Real-time indeterminate scanning track */}
+        <div className="w-full max-w-xs h-1.5 bg-[#E2E8E5] rounded-full mt-4 overflow-hidden relative">
+          <div className="absolute inset-y-0 w-1/3 bg-[#087F75] rounded-full animate-scan-beam" />
+        </div>
       </div>
 
-      {/* Steps Pipeline */}
-      <div className="space-y-4">
-        {steps.map((step) => {
-          const isDone = currentStep > step.id;
-          const isCurrent = currentStep === step.id;
-          const StepIcon = step.icon;
+      {/* Genuine Inspection Pipeline Modules */}
+      <div className="space-y-2">
+        <div className="text-[11px] font-mono font-semibold text-[#697773] uppercase tracking-wider mb-2 flex items-center justify-between">
+          <span>Engine Pipeline Stages</span>
+          <span className="text-[#087F75] flex items-center gap-1">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#087F75] animate-ping" />
+            LIVE EVALUATION
+          </span>
+        </div>
+
+        {pipelineStages.map((stage) => {
+          const StageIcon = stage.icon;
 
           return (
             <div
-              key={step.id}
-              className={`flex items-start gap-3.5 p-3 rounded-xl border transition-all duration-300 ${
-                isCurrent
-                  ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-300 shadow-sm shadow-cyan-500/10'
-                  : isDone
-                  ? 'bg-slate-950/60 border-slate-800 text-slate-300'
-                  : 'opacity-40 border-transparent text-slate-600'
-              }`}
+              key={stage.id}
+              className="flex items-start gap-3 p-2.5 rounded-lg border border-[#E2E8E5] bg-[#F7F8F6]/60 transition-colors"
             >
-              <div className="mt-0.5 shrink-0">
-                {isDone ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                ) : isCurrent ? (
-                  <Loader2 className="w-5 h-5 text-cyan-400 animate-spin" />
-                ) : (
-                  <StepIcon className="w-5 h-5 text-slate-600" />
-                )}
+              <div className="mt-0.5 shrink-0 p-1 rounded bg-[#E6F4F1] text-[#087F75]">
+                <StageIcon className="w-3.5 h-3.5 text-[#087F75]" />
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold uppercase tracking-wider">
-                    STEP {step.id}: {step.title}
+                  <span className="font-sans text-xs font-semibold text-[#172321]">
+                    {stage.id}. {stage.title}
                   </span>
-                  {isDone && <span className="text-[10px] font-mono text-emerald-400">DONE</span>}
-                  {isCurrent && <span className="text-[10px] font-mono text-cyan-400 animate-pulse">ANALYZING...</span>}
                 </div>
-                <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">
-                  {step.desc}
+                <p className="text-[11px] text-[#697773] mt-0.5 leading-snug font-sans">
+                  {stage.desc}
                 </p>
               </div>
             </div>
