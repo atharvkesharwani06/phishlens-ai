@@ -11,6 +11,7 @@ from app.api.demo import router as demo_router
 from app.api.stats import router as stats_router
 from app.api.education import router as education_router
 from app.api.health import router as health_router
+from app.api.auth import router as auth_router
 
 # Create database tables automatically
 Base.metadata.create_all(bind=engine)
@@ -44,6 +45,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Include API Routers
 app.include_router(health_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
 app.include_router(analysis_router, prefix="/api")
 app.include_router(history_router, prefix="/api")
 app.include_router(demo_router, prefix="/api")

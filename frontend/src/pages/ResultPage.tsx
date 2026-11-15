@@ -265,7 +265,7 @@ export const ResultPage: React.FC = () => {
         <DosAndDontsCard dosAndDonts={result.dos_and_donts} isPhishing={isPhishing} />
       </section>
 
-      {/* Technical Forensic Breakdown (Toggleable for Judges / Analysts) */}
+      {/* Technical Forensic Breakdown (Toggleable for Academic Reviewers / Analysts) */}
       <section className="pt-2">
         <button
           onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}

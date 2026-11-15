@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/Frontend-React_19_TypeScript-61DAFB.svg?logo=react&logoColor=black)](https://react.dev)
 [![TailwindCSS](https://img.shields.io/badge/Styles-Tailwind_CSS-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Status](https://img.shields.io/badge/Status-Hackathon_MVP-success.svg)](#)
+[![Status](https://img.shields.io/badge/Status-College_Minor_Project-success.svg)](#)
 
 ---
 
@@ -40,7 +40,7 @@ For every detection, PhishLens answers:
 
 ---
 
-## 🎯 2. Hackathon Track Alignment
+## 🎯 2. College Minor Project Objectives & Scope
 
 PhishLens places AI in the **critical path**:
 - Without the hybrid AI classifier, linguistic feature extractor, and static URL analyzer, threat explainability fails.
@@ -149,7 +149,7 @@ Frontend Web Console will be live at `http://localhost:5173`.
 
 ---
 
-## ⚡ 7. Quick Demo Walkthrough (2-Minute Judge Demo)
+## ⚡ 7. Quick Demo Walkthrough (Project Evaluation & Viva Demo)
 
 1. **Open Landing Page** (`/`): Inspect the clean cybersecurity SaaS interface.
 2. **Click "Demo Center"** (`/demo`):

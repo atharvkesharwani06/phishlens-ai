@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
             <Link to="/learn" className="hover:text-cyan-400 transition-colors">Security Education</Link>
             <Link to="/demo" className="hover:text-cyan-400 transition-colors">Demo Center</Link>
             <span className="text-slate-600">|</span>
-            <span className="text-slate-500">Hackathon Edition</span>
+            <span className="text-slate-500">College Minor Project</span>
           </div>
         </div>
 

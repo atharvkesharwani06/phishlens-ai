@@ -70,7 +70,7 @@ export const DemoCenterPage: React.FC = () => {
       <div className="text-center max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-4">
           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-          <span>HACKATHON LIVE DEMONSTRATION SUITE</span>
+          <span>COLLEGE MINOR PROJECT DEMONSTRATION SUITE</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
           INTERACTIVE DEMO CENTER

@@ -129,3 +129,12 @@ SYNTHETIC_DEMO_CASES = [
 def get_demo_cases():
     """Retrieve all pre-configured synthetic demo scenarios for live presentations."""
     return SYNTHETIC_DEMO_CASES
+
+@router.post("/setup")
+def setup_demo_environment():
+    """Setup and initialize demo scenarios."""
+    return {
+        "status": "success",
+        "message": "Demo cases initialized successfully.",
+        "case_count": len(SYNTHETIC_DEMO_CASES)
+    }

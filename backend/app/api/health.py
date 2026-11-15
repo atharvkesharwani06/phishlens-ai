@@ -10,6 +10,6 @@ def health_check():
         "status": "healthy",
         "service": settings.PROJECT_NAME,
         "tagline": settings.TAGLINE,
-        "version": "1.0.0-hackathon",
+        "version": "1.0.0-minor-project",
         "engine": "PhishLens Hybrid (Rules + ML + Static URL + OCR + Explainability)"
     }

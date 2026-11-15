@@ -277,7 +277,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Hackathon Mission / Educational CTA Banner */}
+      {/* College Minor Project / Educational CTA Banner */}
       <section className="max-w-5xl mx-auto px-4">
         <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/40 border border-slate-800 p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2">
